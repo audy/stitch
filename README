@@ -23,6 +23,10 @@ want to use BioPython anyway.
 
 I've since stopped working on this.  If you want me to start again, ask nicely.
 
+USAGE:
+
+python test.py fastqfile1 fastqfile2 contigfile contig_failed_file
+
 FILES:
 
 dnaobj.py - object representing a FASTA or FASTQ record
@@ -34,3 +38,7 @@ test.py - This IS the main script right now.
 REQUIREMENTS:
 
 Uses blast+ 2.2.23 from NCBI
+
+LICENSE:
+
+See LICENSE file (GNU GPL)
