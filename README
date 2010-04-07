@@ -27,6 +27,8 @@ USAGE:
 
 python test.py fastqfile1 fastqfile2 contigfile contig_failed_file
 
+Where fastqfile1 is the 5' most and fastqfile2 is the 3' most
+
 FILES:
 
 dnaobj.py - object representing a FASTA or FASTQ record
