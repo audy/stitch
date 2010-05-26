@@ -1,7 +1,8 @@
-Austin Davis-Richardson
-harekrishna@gmail.com
 
-# Stich
+# Stitch
+
+Austin Glenn Davis-Richardson
+<harekrishna@gmail.com>
 
 An experiment:
 
