@@ -2,6 +2,11 @@ from fastitr import *
 from doubleblast import *
 from itertools import izip
 from optparse import *
+from multiprocessing import *
+
+def do(reca, recb):
+    return Stitch.stitch(reca, recb)
+    
 
 def main():
     parser = OptionParser(description="stitch.py")
@@ -13,11 +18,13 @@ def main():
     seqsa = open(options.filea, 'r')
     seqsb = open(options.fileb, 'r')
     
+    p = Pool()
+    
     for reca, recb in izip(Fastitr(seqsa, filetype='fastq'), \
         Fastitr(seqsb, filetype='fastq')):
         
-        a = Stitch.stitch(reca, recb)
-        print a
+        p.apply_async(a,(reca,recb))
+
         
 class Stitch:
     @classmethod
