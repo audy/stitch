@@ -1,13 +1,17 @@
 from fastitr import *
 from doubleblast import *
-from time import *
-import sys
 from itertools import izip
+from optparse import *
 
-def main(argv):
-    filea, fileb = sys.argv[1:]
-    seqsa = open(filea, 'r')
-    seqsb = open(fileb, 'r')
+def main():
+    parser = OptionParser(description="stitch.py")
+    parser.add_option('-i', '--first', dest='filea')
+    parser.add_option('-j', '--second', dest='fileb')
+
+    (options, args) = parser.parse_args()
+
+    seqsa = open(options.filea, 'r')
+    seqsb = open(options.fileb, 'r')
     
     for reca, recb in izip(Fastitr(seqsa, filetype='fastq'), \
         Fastitr(seqsb, filetype='fastq')):
@@ -30,7 +34,7 @@ class Stitch:
         print recb.seq
         
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
     
     
 

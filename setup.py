@@ -1,4 +1,7 @@
-from setuptools import setup
+try:
+    from setuptools import setup
+except:
+    from distutils import *
 import os
 
 DOC = 'See README.md'
