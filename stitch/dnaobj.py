@@ -16,7 +16,7 @@ class Dnaobj:
     ''' An object representing either a FASTA or FASTQ record '''
     def __init__(self, header, sequence, quality = False):
         self.header = header[1:]
-        self.sequence = sequence
+        self.seq = sequence
         self.quality = quality
         if quality:
             self.type = 'fastq'
@@ -32,15 +32,14 @@ class Dnaobj:
 				(self.header, self.sequence, self.header, self.quality)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
+	@property
     def complement(self):
         ''' returns complement of sequence '''
         return self.sequence.translate(_complement)
-    def revcomplement(self):
+    @property
+    def revcomp(self):
         ''' returns reverse complement of sequence '''
-        return self.complement()[::-1]
-    def sequence(self):
-        ''' returns DNA sequence '''
-        return self.sequence
+        return self.complement[::-1]
     def quality(self):
         ''' returns quality '''
         return self.quality

@@ -11,6 +11,7 @@ Triplett Lab, University of Florida
 
 from subprocess import Popen, PIPE
 from random import randint, seed
+from commands import *
 
 BLAST = 'blastn'
 THREADS = '1'
@@ -24,12 +25,12 @@ class Doubeblast:
 	def query(self, sub, que):
 		''' bl2seq '''
 		seed()
-		id = hex(randint())[2:]
-		with open('s.%s' % id, 'w') as sfile:
-			print >> sfile, '%s' % sub.seq
+		fname = 's.%s' % (hex(randint())[2:])
+		with open(fname % id, 'w') as sfile:
+			print >> sfile, '%s' % sub.revcomp
 		try:
 			pipe = Popen([BLAST,
-			'-subject', self.subfile.
+			'-subject', fname,
 			'-num_threads', THREADS,
 			'-outfmt', '6'],
 			stdin=PIPE, stdout=PIPE
@@ -38,5 +39,7 @@ class Doubeblast:
 			hits = pipe.communicate()[0].split('\n')
 		except OSError:
 			raise NoBlast
+		finally:
+			
         
         
