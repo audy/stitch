@@ -14,7 +14,7 @@ This script uses BLAST to find how a set of paired end reads overlaps, and then 
 1. Make sure you have NCBI's BLAST version 2.2.23 or greater.
    Get it here: <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>
 
-2. Once in the stitch direcctory do:
+2. Once in the stitch directory do:
    > $ sudo python setup.py install
 
 3. Stitch should have installed successfully meaning that you can now do this:
