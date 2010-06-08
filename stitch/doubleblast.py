@@ -58,6 +58,7 @@ class Blast:
             }
             self.result_list.append(results)
         return self.result_list
+
     def return_contig(self):
         ''' takes blast results -> ('sequence', 'quality')'''
         # What if there is no result?  We must return something that tells
