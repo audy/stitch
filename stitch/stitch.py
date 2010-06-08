@@ -12,7 +12,13 @@ def main(argv):
 	for reca, recb in izip(Fastitr(seqsa, filetype='fastq'), \
 		Fastitr(seqsb, filetype='fastq')):
 		
-		Doubleblast.query(reca, recb)
+		a = Stitch.stitch(reca, recb)
+		print a
+		
+class Stitch:
+    @classmethod
+    def stitch(self, reca, recb):
+        return Doubleblast.query(reca, recb)
 		    
 if __name__ == '__main__':
     main(sys.argv)
