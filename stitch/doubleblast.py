@@ -11,35 +11,36 @@ Triplett Lab, University of Florida
 
 from subprocess import Popen, PIPE
 from random import randint, seed
-from commands import *
+from commands import getoutput
 
 BLAST = 'blastn'
 THREADS = '1'
 
 class NoBlast(Exception):
-	return 'BLAST (%s) either not found or wrong version!' % BLAST
+	def __str__(self):
+	    return 'BLAST (%s) either not found or wrong version!' % BLAST
 
-class Doubeblast:
-	''' Doubleblastdoc '''
-	@classmethod
-	def query(self, sub, que):
-		''' bl2seq '''
-		seed()
-		fname = 's.%s' % (hex(randint())[2:])
-		with open(fname % id, 'w') as sfile:
-			print >> sfile, '%s' % sub.revcomp
-		try:
-			pipe = Popen([BLAST,
-			'-subject', fname,
-			'-num_threads', THREADS,
-			'-outfmt', '6'],
-			stdin=PIPE, stdout=PIPE
-			)
-			pipe.stdin.write('%s' % query)
-			hits = pipe.communicate()[0].split('\n')
-		except OSError:
-			raise NoBlast
-		finally:
-			
+class Doubleblast:
+    ''' Doubleblastdoc '''
+    @classmethod 
+    def query(self, sub, que):
+        ''' bl2seq '''
+        seed()
+        fname = 's.%s' % (hex(randint(0,65535))[2:])
+        with open(fname, 'w') as sfile:
+            print >> sfile, '%s' % sub.revcomp
+        try:
+            pipe = Popen([BLAST,
+            '-subject', fname,
+            '-num_threads', THREADS,
+            '-outfmt', '6'],
+            stdin=PIPE, stdout=PIPE)
+            pipe.stdin.write('%s' % que.seq)
+            hits = pipe.communicate()[0].split('\n')
+        except OSError:
+            raise NoBlast
+        finally:
+            getoutput('rm %s' % fname)
+        print hits
         
         

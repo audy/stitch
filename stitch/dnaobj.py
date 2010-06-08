@@ -26,23 +26,20 @@ class Dnaobj:
         ''' returns a FASTA/Q formatted string '''
         if not self.quality:
             return ('>%s\nself.sequence\n') % \
-				(self.header, self.sequence)
+                (self.header, self.sequence)
         else:
             return('@%s\n%s\n+%s\n%s\n') % \
-				(self.header, self.sequence, self.header, self.quality)
+                (self.header, self.sequence, self.header, self.quality)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
-	@property
+
+    @property
     def complement(self):
         ''' returns complement of sequence '''
-        return self.sequence.translate(_complement)
-    @property
+        return self.seq.translate(_complement)
+
+    @property 
     def revcomp(self):
         ''' returns reverse complement of sequence '''
         return self.complement[::-1]
-    def quality(self):
-        ''' returns quality '''
-        return self.quality
-    def nucqual(self):
-        ''' returns ('sequence', 'quality') '''
-        return self.sequence, self.quality
+        
