@@ -14,8 +14,8 @@ import random
 
 blastprogram = 'bl2seq'
 
-class blast:
-    '''  1 v 1 sequence blaster '''
+class Blast:
+    ''' 1 v 1 sequence blaster '''
     def __init__(self, dnaobj1, dnaobj2):
         self.blobj1 = dnaobj1
         self.blobj2 = dnaobj2

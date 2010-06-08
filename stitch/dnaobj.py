@@ -12,7 +12,7 @@ import string
 
 _complement = string.maketrans('GATCRYgatcry','CTAGYRctagyr')
 
-class dnaobj:
+class Dnaobj:
     ''' An object representing either a FASTA or FASTQ record '''
     def __init__(self, header, sequence, quality = False):
     

@@ -1,4 +1,3 @@
-
 # Stitch
 
 Austin Glenn Davis-Richardson
@@ -10,19 +9,13 @@ Illumina sequencing has the ability to generate paired-end reads.  If the sum of
 
 This script uses BLAST to find how a set of paired end reads overlaps, and then writes out a contig based on the best BLAST hit.
 
-This script is extremely slow.  Probably because it has to write files for each paired-end read, causing a lot of lag.
-
-I eventually gave up as I found an assembly program that supports overlapping paired end reads.
-
-Perhaps this work will be useful to someone else in the future.  Some portions of the script can be used for other general bioinformatics tasks such as dnaobj.py but I'm sure you'll just want to use BioPython anyway.
-
-I've since stopped working on this.  If you want me to start again, ask nicely.
-
 ## Usage
 
 python test.py fastqfile1 fastqfile2 contigfile contig_failed_file
 
-Where fastqfile1 is the 5' most and fastqfile2 is the 3' most
+Where fastqfile1 is the 5' most and fastqfile2 is the 3' most.
+
+(Not to self: Switch to argparse or something!)
 
 ## Files
 
@@ -35,6 +28,11 @@ Where fastqfile1 is the 5' most and fastqfile2 is the 3' most
 ## Pre-reqs
 
 Uses blast+ 2.2.23 from NCBI
+Get it here: <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>
+
+## Bugs
+
+ - Quality scores of the left (5') most read override those of the right (3') read.
 
 ## Know your rights
 

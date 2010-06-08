@@ -10,7 +10,7 @@ Triplett Lab, University of Florida
 
 from dnaobj import *
 
-class fastitr:
+class Fastitr:
     ''' iterates through a fasta or fastq file, returning dnaobj objects '''
     
     def __init__(self, handle, filetype):
@@ -31,7 +31,7 @@ class fastitr:
                 elif counter == 3:
                     rec[counter] = line.strip()
                     counter = 0        
-                    yield dnaobj(rec[0], rec[1], rec[3])
+                    yield Dnaobj(rec[0], rec[1], rec[3])
                     
         elif self.filetype == 'fasta':
             # implement this later

@@ -1,6 +1,5 @@
 from fastitr import *
 from doubleblast import *
-from dnaobj import *
 from time import *
 import sys
 
@@ -19,7 +18,7 @@ def main(argv):
     uncontig2_output = open(uncontigfile + '2', 'w')
     
     for recorda, recordb in zip(fastitr(handle, filetype='fastq'), fastitr(handle2, filetype='fastq')):
-        blobj = blast(recorda, recordb)
+        blobj = Blast(recorda, recordb)
         blobj.bl2seq()
         blobj.parse()
         contig = blobj.return_contig()
