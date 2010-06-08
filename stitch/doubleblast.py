@@ -14,33 +14,38 @@ from random import randint, seed
 from commands import getoutput
 
 BLAST = 'blastn'
-THREADS = '1'
+THREADS = '2'
 
 class NoBlast(Exception):
-	def __str__(self):
-	    return 'BLAST (%s) either not found or wrong version!' % BLAST
+    def __str__(self):
+        return 'BLAST (%s) either not found or wrong version!' % BLAST
 
 class Doubleblast:
     ''' Doubleblastdoc '''
-    @classmethod 
+    @classmethod
     def query(self, sub, que):
         ''' bl2seq '''
         seed()
         fname = 's.%s' % (hex(randint(0,65535))[2:])
         with open(fname, 'w') as sfile:
-            print >> sfile, '%s' % sub.revcomp
+            print >> sfile, '%s' % sub.seq
         try:
             pipe = Popen([BLAST,
+			'-task', 'blastn-short',
             '-subject', fname,
             '-num_threads', THREADS,
             '-outfmt', '6'],
             stdin=PIPE, stdout=PIPE)
-            pipe.stdin.write('%s' % que.seq)
-            hits = pipe.communicate()[0].split('\n')
+            pipe.stdin.write('%s' % que.revcomp)
+            hits = pipe.communicate()
         except OSError:
             raise NoBlast
         finally:
             getoutput('rm %s' % fname)
-        print hits
+        if not hits[0]:
+            print 'no hits'
+        else:
+            print hits[0],
+        print '%s\n%s\n' % (sub.seq, que.revcomp)
         
         
