@@ -30,11 +30,11 @@ class Stitch:
     def stitch(self, reca, recb):
         self.reca = reca
         self.recb = recb
-        result = Doubleblast.query(reca, recb)
-        if not result: 
-            return None
-        for key in result:
-            setattr(self, key, result[key])
+        self.result = Doubleblast.query(reca, recb)
+        if result: 
+            for key in result:
+                setattr(self, key, result[key])
+        return self
         
 if __name__ == '__main__':
     main()
