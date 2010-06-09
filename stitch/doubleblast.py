@@ -55,20 +55,20 @@ class Doubleblast:
             percent_identity, length, mismatches, gap_openings, \
                 qstart, qend, sstart, send, evalue, bitscore \
                 = line.split('\t')[2:]
-            result = {'percent_identity': float(percent_identity),
-                      'alignment_length': int(length),
+            result = {'identity': float(percent_identity),
+                      'length': int(length),
                       'mismatches': int(mismatches),
-                      'gap_openings': int(gap_openings),
-                      'query_start': int(qstart),
-                      'query_end': int(qend),
-                      'subject_start': int(sstart),
-                      'subject_end': int(send),
-                      'e-value': float(evalue),
+                      'gaps': int(gap_openings),
+                      'qstart': int(qstart),
+                      'qend': int(qend),
+                      'sstart': int(sstart),
+                      'send': int(send),
+                      'evalue': float(evalue),
                       'bitscore': float(bitscore) }
             results.append(result)
         
             
-        results = sorted(results, key=itemgetter('e-value'))
+        results = sorted(results, key=itemgetter('evalue'))
 
         return results[0]
         
