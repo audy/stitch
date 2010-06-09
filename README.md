@@ -3,11 +3,13 @@
 Austin Glenn Davis-Richardson
 <harekrishna@gmail.com>
 
-An experiment:
+Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
-Illumina sequencing has the ability to generate paired-end reads.  If the sum of the DNA fragments is roughly less than that of 2x an illumina read (~100bp),  they can be said to "overlap."  This script also preserves the quality scores (the 5'-most overrides the 3'-most)
+## Description:
 
-This script uses BLAST to find how a set of paired end reads overlaps, and then writes out a contig based on the best BLAST hit.
+Illumina sequencing has the ability to generate "paired ends."
+We did an experiment where our paired ends overlapped.
+I wrote this script to assemble the overlapping paired ends using BLAST.
 
 ## Installation
 
@@ -25,17 +27,24 @@ This script uses BLAST to find how a set of paired end reads overlaps, and then 
 
 Do this:
 
-> $ python test.py fastqfile1 fastqfile2 contigfile contig_failed_file
+> $ stitch -i fastqfile1 -j fastqfile2
 
-Where fastqfile1 is the 5' most and fastqfile2 is the 3' most.
-
-(Not to self: Switch to argparse or something!)
+Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
 
 ## Bugs
 
- - Quality scores of the left (5') most read override those of the right (3') read.
+ - Quality scores of the left (5') most read override those of the right (3') 
+   read.
+ - Slow, despite threading.
+
+## Features
+
+ - Automatically joines overlapping paired ends!
+ - **Multithreaded** - Automatically uses all cores on your system!
+ - Generates 3 files: `contigs`, duds from `fastqfile1` and duds from
+   `fastqfile2`
 
 ## Know your rights
 
 Stitch is free and open-source.
-See LICENSE file (GNU GPL v3)
+See LICENSE (GNU GPL v3)
