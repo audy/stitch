@@ -12,7 +12,7 @@ from dnaobj import *
 
 class Fastitr:
     ''' iterates through a fasta or fastq file, returning dnaobj objects '''
-    def __init__(self, handle, filetype):
+    def __init__(self, handle, filetype='fastq'):
         self.filetype = filetype
         self.handle = handle
     def __iter__(self):

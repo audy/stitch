@@ -16,9 +16,9 @@ def main():
     
     p = Pool()
     
-    for i in p.imap(doStitch, izip(Fastitr(seqsa, filetype='fastq'), \
-            Fastitr(seqsb, filetype='fastq'))):
-        print i
+    for i in p.imap(doStitch, izip(Fastitr(seqsa), \
+            Fastitr(seqsb))):
+        print dir(i)
 
 
 def doStitch(recs):
@@ -28,13 +28,13 @@ def doStitch(recs):
 class Stitch:
     @classmethod
     def stitch(self, reca, recb):
+        self.reca = reca
+        self.recb = recb
         result = Doubleblast.query(reca, recb)
         if not result: 
-            print 'No Hit!'
             return None
         for key in result:
             setattr(self, key, result[key])
-        return True
         
 if __name__ == '__main__':
     main()
