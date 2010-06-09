@@ -26,10 +26,10 @@ class Dnaobj:
         ''' returns a FASTA/Q formatted string '''
         if not self.quality:
             return ('>%s\nself.sequence\n') % \
-                (self.header, self.sequence)
+                (self.header, self.seq)
         else:
             return('@%s\n%s\n+%s\n%s\n') % \
-                (self.header, self.sequence, self.header, self.quality)
+                (self.header, self.seq, self.header, self.quality)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
 
