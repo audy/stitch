@@ -3,12 +3,6 @@ from doubleblast import *
 from itertools import izip
 from optparse import *
 from multiprocessing import *
-
-def do(recs):
-    reca, recb = recs
-    a = Stitch.stitch(reca, recb)
-    return
-    
     
 def main():
     parser = OptionParser(description="stitch.py")
@@ -22,11 +16,14 @@ def main():
     
     p = Pool()
     
-    for i in p.imap(do, izip(Fastitr(seqsa, filetype='fastq'), \
+    for i in p.imap(doStitch, izip(Fastitr(seqsa, filetype='fastq'), \
             Fastitr(seqsb, filetype='fastq'))):
-        pass
+        print i
 
 
+def doStitch(recs):
+    reca, recb = recs
+    return Stitch.stitch(reca, recb)
         
 class Stitch:
     @classmethod
@@ -35,21 +32,13 @@ class Stitch:
         if not result: 
             print 'No Hit!'
             return None
-        qstart = result['query_start']
-        sstart = result['subject_start']
-        qend = result['query_end']
-        send = result['subject_end']
-        
-        print qstart, qend, sstart, send
-        print reca.revcomp
-        print recb.seq
+        for key in result:
+            setattr(self, key, result[key])
         return True
         
 if __name__ == '__main__':
     main()
     
-    
-
 
 def return_contig(self):
     ''' takes blast results -> ('sequence', 'quality')'''
