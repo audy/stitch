@@ -27,7 +27,7 @@ class Doubleblast:
     def query(self, sub, que):
         ''' bl2seq '''
         seed()
-        fname = 's.%s' % (hex(randint(0,65535))[2:])
+        fname = 's.%s' % (hex(randint(0,1048575))[2:])
         results = []
         
         with open(fname, 'w') as sfile:
@@ -66,6 +66,9 @@ class Doubleblast:
                       'e-value': float(evalue),
                       'bitscore': float(bitscore) }
             results.append(result)
+        
             
         results = sorted(results, key=itemgetter('e-value'))
+
         return results[0]
+        
