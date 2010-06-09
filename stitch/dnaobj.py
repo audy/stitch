@@ -17,19 +17,19 @@ class Dnaobj:
     def __init__(self, header, sequence, quality = False):
         self.header = header[1:]
         self.seq = sequence
-        self.quality = quality
+        self.qual = quality
         if quality:
             self.type = 'fastq'
         else:
             self.type = 'fasta'
     def __str__(self):
         ''' returns a FASTA/Q formatted string '''
-        if not self.quality:
+        if not self.qual:
             return ('>%s\nself.sequence\n') % \
                 (self.header, self.seq)
         else:
             return('@%s\n%s\n+%s\n%s\n') % \
-                (self.header, self.seq, self.header, self.quality)
+                (self.header, self.seq, self.header, self.qual)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
 
@@ -43,3 +43,7 @@ class Dnaobj:
         ''' returns reverse complement of sequence '''
         return self.complement[::-1]
         
+    @property
+    def rqual(self):
+        ''' returns reverse quality'''
+        return self.qual[::-1]

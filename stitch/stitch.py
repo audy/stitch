@@ -1,8 +1,10 @@
 from fastitr import *
 from doubleblast import *
-from itertools import izip
+from itertools import izip, imap
 from optparse import *
 from multiprocessing import *
+import os
+import time
     
 def main():
     parser = OptionParser(description="stitch.py")
@@ -15,55 +17,52 @@ def main():
     seqsb = open(options.fileb, 'r')
     
     p = Pool()
-    
-    for i in p.imap(doStitch, izip(Fastitr(seqsa), \
+        
+    for i in imap(doStitch, izip(Fastitr(seqsa), \
             Fastitr(seqsb))):
-        print dir(i)
+        if i.hits:        
+            # Send to contigs
+            print '%g %s %s' % (i.evalue, i.bitscore, i.gaps)
+            print 'q.start=%s, q.end=%s, s.start=%s, s.end=%s' % \
+                (i.qstart, i.qend, i.sstart, i.send)
+            print '%s\n%s' % (i.reca.seq, i.recb.seq)
+            print '%s, %s\n' % (i.contig, len(i.contig))
+        else:
+            # Send to duds
+            pass
 
 
 def doStitch(recs):
     reca, recb = recs
-    return Stitch.stitch(reca, recb)
+    return Stitch(reca, recb)
         
 class Stitch:
-    @classmethod
-    def stitch(self, reca, recb):
+    def __init__(self, reca, recb):
         self.reca = reca
         self.recb = recb
-        self.result = Doubleblast.query(reca, recb)
-        if result: 
+        self.hits = False
+        result = Doubleblast.query(reca, recb)
+        if result:
+            self.hits = True
             for key in result:
                 setattr(self, key, result[key])
-        return self
-        
+            self.generate_contig()
+    def generate_contig(self):
+        if self.qstart < self.sstart:
+            print 'qstart<sstart'
+            self.contig = self.recb.revcomp[:self.sstart-self.qstart] + \
+                self.reca.seq
+            self.qual = self.recb.rqual[:self.sstart-self.qstart] + \
+                    self.reca.qual            
+        elif self.qstart > self.sstart:
+            print 'qstart>sstart'
+            self.contig = self.reca.seq + \
+                self.recb.revcomp[self.send-self.qend:]
+            self.qual = self.reca.qual + \
+                self.recb.rqual[self.send-self.qend:]
+        elif self.sstart == self.qstart:
+            self.contig = self.reca.seq
+            self.qual = self.reca.seq
 if __name__ == '__main__':
     main()
     
-
-def return_contig(self):
-    ''' takes blast results -> ('sequence', 'quality')'''
-    # What if there is no result?  We must return something that tells
-        # main() so he can just write out the regular sequences.
-    if self.result_list == []:
-        return ()
-    # return contig as a tuple, create the object in main, or don't!
-    # It might be faster to skip the object completely.
-    # But then why did I bother writing it?  For fun.
-    best_score = 0.0
-    best_item = {}
-    for result in self.result_list:
-        if result['e-value'] > best_score:
-            best_item = result
-    qstart = best_item['query_start']
-    sstart = best_item['subject_start']
-    qend = best_item['query_end']
-    send = best_item['subject_end']
-    if qstart < sstart:     
-        contig_sequence = self.blobj2.revcomplement()[:sstart-qstart] + self.blobj1.sequence
-        contig_quality = self.blobj2.quality[::-1][:sstart-qstart] + self.blobj1.quality            
-    elif qstart > sstart:            
-        contig_sequence = self.blobj1.sequence + self.blobj2.revcomplement()[send-qend:]
-        contig_quality = self.blobj1.quality + self.blobj2.quality[::-1][send-qend:]
-    elif sstart == qstart:
-        return (self.blobj1.sequence, self.blobj1.quality)
-    return (contig_sequence, contig_quality)
