@@ -4,10 +4,12 @@ from itertools import izip
 from optparse import *
 from multiprocessing import *
 
-def do(reca, recb):
-    return Stitch.stitch(reca, recb)
+def do(recs):
+    reca, recb = recs
+    a = Stitch.stitch(reca, recb)
+    return
     
-
+    
 def main():
     parser = OptionParser(description="stitch.py")
     parser.add_option('-i', '--first', dest='filea')
@@ -20,17 +22,19 @@ def main():
     
     p = Pool()
     
-    for reca, recb in izip(Fastitr(seqsa, filetype='fastq'), \
-        Fastitr(seqsb, filetype='fastq')):
-        
-        p.apply_async(a,(reca,recb))
+    for i in p.imap(do, izip(Fastitr(seqsa, filetype='fastq'), \
+            Fastitr(seqsb, filetype='fastq'))):
+        pass
+
 
         
 class Stitch:
     @classmethod
     def stitch(self, reca, recb):
         result = Doubleblast.query(reca, recb)
-        if not result: return None
+        if not result: 
+            print 'No Hit!'
+            return None
         qstart = result['query_start']
         sstart = result['subject_start']
         qend = result['query_end']
@@ -39,6 +43,7 @@ class Stitch:
         print qstart, qend, sstart, send
         print reca.revcomp
         print recb.seq
+        return True
         
 if __name__ == '__main__':
     main()
