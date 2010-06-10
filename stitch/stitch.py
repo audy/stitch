@@ -4,6 +4,7 @@ from itertools import izip, imap
 from optparse import *
 from multiprocessing import *
 import os
+import sys
 import time
     
 def main():
@@ -20,17 +21,13 @@ def main():
         
     for i in imap(doStitch, izip(Fastitr(seqsa), \
             Fastitr(seqsb))):
-        if i.hits:        
-            # Send to contigs
-            print '%g %s %s' % (i.evalue, i.bitscore, i.gaps)
-            print 'q.start=%s, q.end=%s, s.start=%s, s.end=%s' % \
-                (i.qstart, i.qend, i.sstart, i.send)
-            print '%s\n%s' % (i.reca.seq, i.recb.seq)
-            print '%s, %s\n' % (i.contig, len(i.contig))
+        if i.hits:
+            print i.reca.seq
+            print i.recb.revcomp
+            pass
         else:
             # Send to duds
-            pass
-
+            print '.',
 
 def doStitch(recs):
     reca, recb = recs
@@ -43,26 +40,41 @@ class Stitch:
         self.hits = False
         result = Doubleblast.query(reca, recb)
         if result:
-            self.hits = True
             for key in result:
                 setattr(self, key, result[key])
             self.generate_contig()
-    def generate_contig(self):
+    def generate_contig(self): 
+        # i am the shittiest programmer in the world!
         if self.qstart < self.sstart:
-            print 'qstart<sstart'
-            self.contig = self.recb.revcomp[:self.sstart-self.qstart] + \
-                self.reca.seq
-            self.qual = self.recb.rqual[:self.sstart-self.qstart] + \
-                    self.reca.qual            
-        elif self.qstart > self.sstart:
-            print 'qstart>sstart'
-            self.contig = self.reca.seq + \
-                self.recb.revcomp[self.send-self.qend:]
-            self.qual = self.reca.qual + \
-                self.recb.rqual[self.send-self.qend:]
-        elif self.sstart == self.qstart:
-            self.contig = self.reca.seq
-            self.qual = self.reca.seq
+            self.hits = True
+            subject, subqual = self.reca.seq, self.reca.qual
+            query, quequal = self.recb.revcomp, self.recb.qual
+            qs, ss, qe, se = self.qstart, self.sstart, self.qend, self.send
+            print qs, ss, qe, se
+            
+            # first region, comes from query sequence
+            a = query[0:(qs-ss)]
+            aq = quequal[0:(qs-ss)]
+
+            # vote (overlap) region, all should be the same length
+            bas = query[qs-ss:len(query)]
+            baq = quequal[qs-ss:len(query)]
+            bbs = subject[0:len(query)+ss-qs]
+            bbq = subqual[0:len(query)+ss-qs]
+            
+            for i in (bas, baq, bbs, bbq): print len(i),
+            
+            # last region, comes from subject sequence
+            c = subject[len(query):len(query)-qe]
+            cq = subqual[len(query):len(query)-qe]
+            setattr(self, 'contig', '')
+
+            
+            
+            
 if __name__ == '__main__':
-    main()
-    
+    try:
+        main()
+    except KeyboardInterrupt:
+        print >> sys.stderr, 'Ouch!'
+        quit()

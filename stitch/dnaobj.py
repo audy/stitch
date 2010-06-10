@@ -32,17 +32,14 @@ class Dnaobj:
                 (self.header, self.seq, self.header, self.qual)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
-
     @property
     def complement(self):
         ''' returns complement of sequence '''
         return self.seq.translate(_complement)
-
     @property 
     def revcomp(self):
         ''' returns reverse complement of sequence '''
         return self.complement[::-1]
-        
     @property
     def rqual(self):
         ''' returns reverse quality'''

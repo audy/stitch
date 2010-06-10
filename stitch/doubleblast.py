@@ -14,6 +14,7 @@ from random import randint, seed
 from commands import getoutput
 from operator import itemgetter
 
+
 BLAST = 'blastn'
 THREADS = '2'
 
@@ -27,34 +28,33 @@ class Doubleblast:
     def query(self, reca, recb):
         ''' bl2seq '''
 
-
-
         seed()
         fname = 's.%s' % (hex(randint(0,1048575))[2:])
         results = []
         
         with open(fname, 'w') as sfile:
-            print >> sfile, '%s' % recb.seq
+            print >> sfile, '%s' % recb.revcomp
 
         try:
             pipe = Popen([BLAST,
             '-task', 'blastn-short',
             '-subject', fname,
             '-num_threads', THREADS,
-            '-outfmt', '6'],
+            '-outfmt', '6',
+            '-strand', 'plus'],
             stdin=PIPE, stdout=PIPE)
             pipe.stdin.write('%s' % reca.seq)
             hits = pipe.communicate()[0]
             
-            pipe = Popen([BLAST,
-            '-task', 'blastn-short',
-            '-subject', fname,
-            '-num_threads', THREADS,
-            '-outfmt', '0'],
-            stdin=PIPE, stdout=PIPE)
-            pipe.stdin.write('%s' % reca.seq)
-            print pipe.communicate()[0]
-            
+#            pipe = Popen([BLAST,
+#            '-task', 'blastn-short',
+#            '-subject', fname,
+#            '-num_threads', THREADS,
+#            '-outfmt', '0',
+#            '-strand', 'plus'],
+#            stdin=PIPE, stdout=PIPE)
+#            pipe.stdin.write('%s' % reca.seq)
+#            print pipe.communicate()[0]        
             
         except OSError:
             raise NoBlast
@@ -80,7 +80,6 @@ class Doubleblast:
                       'evalue': float(evalue),
                       'bitscore': float(bitscore) }
             results.append(result)
-        
             
         results = sorted(results, key=itemgetter('evalue'))
 
