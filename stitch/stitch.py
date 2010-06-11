@@ -24,7 +24,7 @@ def main():
         if i.hits:
             print i.reca.seq
             print i.recb.revcomp
-            pass
+            print i.contig
         else:
             # Send to duds
             print '.',
@@ -53,22 +53,63 @@ class Stitch:
             print qs, ss, qe, se
             
             # first region, comes from query sequence
-            a = query[0:(qs-ss)]
-            aq = quequal[0:(qs-ss)]
+            a = subject[0:ss]
+            aq = subject[0:ss]
 
             # vote (overlap) region, all should be the same length
-            bas = query[qs-ss:len(query)]
-            baq = quequal[qs-ss:len(query)]
-            bbs = subject[0:len(query)+ss-qs]
-            bbq = subqual[0:len(query)+ss-qs]
+            bqs = query[0:len(subject)-ss+qs]
+            bqq = quequal[0:len(subject)-ss+qs]
+            bss = subject[ss-qs:]
+            bsq = subqual[ss-qs:]
             
-            for i in (bas, baq, bbs, bbq): print len(i),
+            b = []
+            bq = []
+            
+            # seriously, someone shoot me.
+            for ((qn, qq), (sn, sq)) in izip(izip(bqs, bqq), izip(bss, bsq)):
+                if qq > sq:
+                    b += qn
+                    bq += qq
+                elif qq < sq:
+                    b += sn
+                    bq += sq
+                elif qq == sq:
+                    if qn == sn:
+                        b += sn
+                        bq += sq
+                    elif qn != sn:
+                        if qn == 'N':
+                            b += sn
+                            bq += sq
+                        elif sn == 'N':
+                            b += qn
+                            bq += qq
+                        if (qn and sn) in ('A', 'G'):
+                            b += 'R'
+                            bq += max(qq, sq)
+                        elif (qn and sn) in ('T', 'C'):
+                            b += 'Y'
+                            bq += max(qq, sq)
+                        elif (qn and sn) in ('A', 'C'):
+                            b += 'M'
+                            bq += max(qq, sq)
+                        elif (qn and sn) in ('G', 'C'):
+                            b += 'S'
+                            bq += max(qq, sq)
+                        elif (qn and sn) in ('A', 'T'):
+                            b += 'W'
+                            bq += max(qq, sq)
+                        else:
+                            b += 'N'
+                            bq += max(qq, sq)
+                                        
+            b = ''.join(b)
             
             # last region, comes from subject sequence
-            c = subject[len(query):len(query)-qe]
-            cq = subqual[len(query):len(query)-qe]
-            setattr(self, 'contig', '')
-
+            c = query[len(subject)-qs+ss:]
+            cq = quequal[len(subject)-qs+ss:]
+            
+            setattr(self, 'contig', a+b+c)
             
             
             

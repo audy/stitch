@@ -44,17 +44,7 @@ class Doubleblast:
             '-strand', 'plus'],
             stdin=PIPE, stdout=PIPE)
             pipe.stdin.write('%s' % reca.seq)
-            hits = pipe.communicate()[0]
-            
-#            pipe = Popen([BLAST,
-#            '-task', 'blastn-short',
-#            '-subject', fname,
-#            '-num_threads', THREADS,
-#            '-outfmt', '0',
-#            '-strand', 'plus'],
-#            stdin=PIPE, stdout=PIPE)
-#            pipe.stdin.write('%s' % reca.seq)
-#            print pipe.communicate()[0]        
+            hits = pipe.communicate()[0]      
             
         except OSError:
             raise NoBlast
