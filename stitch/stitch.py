@@ -66,7 +66,7 @@ class Stitch:
             bq = []
             
             # seriously, someone shoot me.
-            for ((qn, qq), (sn, sq)) in izip(izip(bqs, bqq), izip(bss, bsq)):
+            for ((qn, qq), (sn, sq)) in izip(izip(bqs, bqq), izip(bss, 0bsq)):
                 if qq > sq:
                     b += qn
                     bq += qq
