@@ -13,7 +13,7 @@ def main():
     parser = OptionParser(
         description="""Stitch - Tool for creating contigs from overlapping
 paried-end illumina reads.""",
-        usage='-i fastqfile1 -j fastqfile2')
+        usage='-i <fastq file 1> -j <fastq file 2> -o <output prefix>')
     parser.add_option('-i', '--first', dest='filea')
     parser.add_option('-j', '--second', dest='fileb')
     parser.add_option('-o', '--output', dest='prefix')
@@ -23,16 +23,16 @@ paried-end illumina reads.""",
     if not (options.filea or options.fileb or options.prefix):
         print >> sys.stderr, 'Usage: %s %s' % \
             (parser.get_prog_name(), parser.usage)
-        quit()
+        sys.exit()
     
     seqsa = open(options.filea, 'r')
     seqsb = open(options.fileb, 'r')
     
     numcontigs, numtotes = 0, 0
     
-    dudsa = open('%s-nh-s1.fastq', 'w')
-    dudsb = open('%s-nh-s2.fastq', 'w')
-    outfile = open('%s-contigs.fastq', 'w')
+    dudsa = open('%s-nh-s1.fastq' % options.prefix, 'w')
+    dudsb = open('%s-nh-s2.fastq' % options.prefix, 'w')
+    outfile = open('%s-contigs.fastq' % options.prefix , 'w')
     p = Pool()
      
     for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
@@ -41,9 +41,9 @@ paried-end illumina reads.""",
             numcontigs += 1
         else:
             # Send to duds
-            reca, recb = i
-            print >> sys.dudsa, reca
-            print >> sys.dudsb, recb
+            reca, recb = i.originals
+            print >> dudsa, reca
+            print >> dudsb, recb
         numtotes += 1
     dudsa.close()
     dudsb.close()
@@ -78,13 +78,13 @@ class Stitch:
         # Todo: Get rid of results that don't make sense.
         
         # Grab most e-valued
+        self.originals = (reca, recb)
         if results:
             self.result = sorted(results, key=itemgetter('evalue'))[0]
             for key in self.result:
                 setattr(self, key, self.result[key])
             self.record = self._generate_contig()
-        else:
-            return (reca, recb)
+
             
     def _generate_contig(self): 
         ''' Generate le contig '''
