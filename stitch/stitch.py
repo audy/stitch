@@ -28,17 +28,14 @@ paried-end illumina reads.""",
     
     p = Pool()
      
-    try:   
-        for i in p.imap(doStitch, izip(Fasta(seqsa), \
-                Fasta(seqsb))):
-            if i.hits:
-                pass
-                #print i.contig
-            else:
-                # Send to duds
-                pass
-    except KeyboardInterrupt:
-        return
+    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+        if i.hits:
+            pass
+            #print i.contig
+        else:
+            # Send to duds
+            pass
+
 
 
 def doStitch(recs):
@@ -48,7 +45,6 @@ def doStitch(recs):
         return Stitch(reca, recb)
     except KeyboardInterrupt:
         return
-
     
 class Stitch:
     ''' Stitches together two overlapping Illumina reads using Doubleblast '''
@@ -56,30 +52,27 @@ class Stitch:
         self.reca = reca
         self.recb = recb
         self.hits = False
-        results = Doubleblast.query(reca, recb)
+        results = Doubleblast.query(reca.seq, recb.revcomp)
         
         # BUG: See README.rst
         
         # Todo: Get rid of results that don't make sense.
         
-        
         # Grab most e-valued
-        self.result = sorted(results, key=itemgetter('evalue'))[0]
-        
-        if self.result:
+        if results:
+            self.result = sorted(results, key=itemgetter('evalue'))[0]
             for key in self.result:
                 setattr(self, key, self.result[key])
             self._generate_contig()
             
     def _generate_contig(self): 
         ''' Generate le contig '''
-        if qstart >= sstart:
+        if self.qstart >= self.sstart:
             return
             
+        print self.raw_output
         self.hits = True
-        
         self.contig = []
-        
         subject, subqual = self.recb.seq, self.recb.qual
         query, quequal = self.reca.revcomp, self.reca.qual[::-1]
         
@@ -96,7 +89,6 @@ class Stitch:
                 self.contig.append(qn)
             else:
                 self.contig.append('X')
-        
         
         # The end
         

@@ -25,7 +25,7 @@ class NoBlast(Exception):
 class Doubleblast:
     ''' Doubleblastdoc '''
     @classmethod
-    def query(self, reca, recb):
+    def query(self, seqa, seqb):
         ''' bl2seq '''
 
         seed()
@@ -34,7 +34,7 @@ class Doubleblast:
 
         try:
             with open(fname, 'w') as sfile:
-                print >> sfile, '%s' % recb.revcomp
+                print >> sfile, '%s' % seqb
             pipe = Popen([BLAST,
             '-task', 'blastn-short',
             '-subject', fname,
@@ -42,17 +42,17 @@ class Doubleblast:
             '-outfmt', '6',
             '-strand', 'plus'],
             stdin=PIPE, stdout=PIPE)
-            pipe.stdin.write('%s' % reca.seq)
-            hits = pipe.communicate()[0]    
+            pipe.stdin.write('%s' % seqa)
+            self.hits = pipe.communicate()[0]
         except OSError:
             raise NoBlast
         finally:
             getoutput('rm %s' % fname)
 
-        if not hits:
+        if not self.hits:
             return None
                     
-        for line in hits.split('\n'):
+        for line in self.hits.split('\n'):
             if not line: continue
             percent_identity, length, mismatches, gap_openings, \
                 qstart, qend, sstart, send, evalue, bitscore \
@@ -66,8 +66,8 @@ class Doubleblast:
                       'sstart': int(sstart),
                       'send': int(send),
                       'evalue': float(evalue),
-                      'bitscore': float(bitscore) }
+                      'bitscore': float(bitscore),
+                      'raw_output': self.hits}
             results.append(result)
             
-        results = sorted(results, key=itemgetter('evalue'))
-        return results[0]
+        return results
