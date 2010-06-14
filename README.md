@@ -42,8 +42,8 @@ Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
    the hit used to create the contig is chosen at random.  I should come up
    with additional criteria such as length, and whether or not the data makes
    any sense.
- - Doubleblast should return a tuple of BLAST hits, then Stitch should 
-   determine which hit is used based on whatever criteria (Doubleblast is
+ - `Doubleblast` should return a tuple of BLAST hits, then `Stitch` should 
+   determine which hit is used based on whatever criteria (`Doubleblast` is
    **only** for parsing `blastn`, **not** processing results!)
 
 ## Features
