@@ -1,6 +1,6 @@
 from dnaobj import *
 
-class Fastitr:
+class Fasta:
     ''' iterates through a fasta or fastq file, returning dnaobj objects '''
     def __init__(self, handle, filetype='fastq'):
         self.filetype = filetype
