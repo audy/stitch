@@ -35,7 +35,7 @@ paried-end illumina reads.""",
     outfile = open('%s-contigs.fastq', 'w')
     p = Pool()
      
-    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         if i.hits:
             print >> outfile, i.record
             numcontigs += 1
