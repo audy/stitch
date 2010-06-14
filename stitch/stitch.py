@@ -37,7 +37,6 @@ paried-end illumina reads.""",
             pass
 
 
-
 def doStitch(recs):
     ''' Used by Pool.imap to create stitch jobs '''
     try:

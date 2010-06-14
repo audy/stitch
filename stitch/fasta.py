@@ -1,4 +1,4 @@
-from dnaobj import *
+from dna import *
 
 class Fasta:
     ''' iterates through a fasta or fastq file, returning dnaobj objects '''
@@ -17,7 +17,7 @@ class Fasta:
                 elif counter == 3:
                     rec[counter] = line.strip()
                     counter = 0
-                    yield Dnaobj(rec[0], rec[1], rec[3])                    
+                    yield Dna(rec[0], rec[1], rec[3])                    
         elif self.filetype == 'fasta':
             # implement this later
             pass
