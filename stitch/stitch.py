@@ -26,16 +26,21 @@ paried-end illumina reads.""",
     seqsb = open(options.fileb, 'r')
     
     p = Pool()
-        
-    for i in imap(doStitch, izip(Fastitr(seqsa), \
-            Fastitr(seqsb))):
-        if i.hits:
-            print i.reca.seq
-            print i.recb.revcomp
-            print i.contig
-        else:
-            # Send to duds
-            print '.',
+     
+    try:   
+        for i in imap(doStitch, izip(Fastitr(seqsa), \
+                Fastitr(seqsb))):
+            if i.hits:
+                print i.reca.seq
+                print i.recb.revcomp
+                print i.contig
+            else:
+                # Send to duds
+                print '.',
+    except:
+        pass
+    finally:
+        p.close()
 
 def doStitch(recs):
     reca, recb = recs
@@ -58,14 +63,11 @@ class Stitch:
             subject, subqual = self.recb.seq, self.recb.qual
             query, quequal = self.reca.revcomp, self.reca.qual[::-1]
             
+            for nuc in subject:
+                print nuc, 
             
-            
-            for nuc in subject[]
-            
-            finalsec, finalqual = [], []
-            
+            finalseq, finalqual = [], []
             contig = { "seq": finalseq, "qual": finalqual}
-           
             setattr(self, 'contig', contig)
             
             
