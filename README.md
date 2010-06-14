@@ -38,6 +38,10 @@ Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
  - Slow, despite threading.
  - Temporary files don't always get deleted, catching `KeyboardInterrupt`s
    in `Pool()` is weird.  Apparently, this is a Python bug.
+ - If there are more than one BLAST hits, two of with with equal e-values,
+   the hit used to create the contig is chosen at random.  I should come up
+   with additional criteria such as length, and whether or not the data makes
+   any sense.
 
 ## Features
 
