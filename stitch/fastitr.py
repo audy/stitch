@@ -1,13 +1,3 @@
-'''
-fastitr.py
-
-Iterates through a FASTA or FASTQ file returning dnaobj objects from dnaobj.py
-
-Austin Glenn Davis-Richardson
-austingdr@gmail.com
-Triplett Lab, University of Florida
-'''
-
 from dnaobj import *
 
 class Fastitr:
