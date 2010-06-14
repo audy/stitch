@@ -28,7 +28,7 @@ paried-end illumina reads.""",
     p = Pool()
      
     try:   
-        for i in imap(doStitch, izip(Fastitr(seqsa), \
+        for i in p.imap(doStitch, izip(Fastitr(seqsa), \
                 Fastitr(seqsb))):
             if i.hits:
                 print i.reca.seq
@@ -37,15 +37,16 @@ paried-end illumina reads.""",
             else:
                 # Send to duds
                 print '.',
-    except:
-        pass
-    finally:
-        p.close()
+    except KeyboardInterrupt:
+        p.terminate()
 
 def doStitch(recs):
-    reca, recb = recs
-    return Stitch(reca, recb)
-
+    try:
+        reca, recb = recs
+        return Stitch(reca, recb)
+    except KeyboardInterrupt:
+        return
+    
 class Stitch:
     def __init__(self, reca, recb):
         self.reca = reca
