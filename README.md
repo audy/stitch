@@ -36,7 +36,7 @@ Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
  - Quality scores of the left (5') most read override those of the right (3') 
    read.
  - Slow, despite threading.
- - Temporary files don't always get deleted, catching `KeyboardInterrupts`
+ - Temporary files don't always get deleted, catching `KeyboardInterrupt`s
    in `Pool()` is weird.  Apparently, this is a Python bug.
 
 ## Features
