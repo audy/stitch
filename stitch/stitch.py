@@ -16,10 +16,11 @@ paried-end illumina reads.""",
         usage='-i fastqfile1 -j fastqfile2')
     parser.add_option('-i', '--first', dest='filea')
     parser.add_option('-j', '--second', dest='fileb')
+    parser.add_option('-o', '--output', dest='prefix')
 
     (options, args) = parser.parse_args()
     
-    if not (options.filea or options.fileb):
+    if not (options.filea or options.fileb or options.prefix):
         print >> sys.stderr, 'Usage: %s %s' % \
             (parser.get_prog_name(), parser.usage)
         quit()
@@ -27,14 +28,31 @@ paried-end illumina reads.""",
     seqsa = open(options.filea, 'r')
     seqsb = open(options.fileb, 'r')
     
+    numcontigs, numtotes = 0, 0
+    
+    dudsa = open('%s-nh-s1.fastq', 'w')
+    dudsb = open('%s-nh-s2.fastq', 'w')
+    outfile = open('%s-contigs.fastq', 'w')
     p = Pool()
      
     for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         if i.hits:
-            print i.record
+            print >> outfile, i.record
+            numcontigs += 1
         else:
             # Send to duds
-            pass
+            reca, recb = i
+            print >> sys.dudsa, reca
+            print >> sys.dudsb, recb
+        numtotes += 1
+    dudsa.close()
+    dudsb.close()
+    outfile.close()
+    
+    print 'Made %s contigs, out of %s reads' % \
+        (numcontigs, numcontigs + numtotes)
+    
+    
 
 
 def doStitch(recs):
@@ -65,6 +83,8 @@ class Stitch:
             for key in self.result:
                 setattr(self, key, self.result[key])
             self.record = self._generate_contig()
+        else:
+            return (reca, recb)
             
     def _generate_contig(self): 
         ''' Generate le contig '''
