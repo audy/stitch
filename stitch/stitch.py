@@ -1,8 +1,8 @@
-from fastitr import *
+from fasta import *
 from doubleblast import *
 from itertools import izip, imap
 from optparse import *
-from multiprocessing import *
+from multiprocessing import Pool
 import os
 import sys
 import time
@@ -28,17 +28,17 @@ paried-end illumina reads.""",
     p = Pool()
      
     try:   
-        for i in p.imap(doStitch, izip(Fastitr(seqsa), \
-                Fastitr(seqsb))):
+        for i in imap(doStitch, izip(Fasta(seqsa), \
+                Fasta(seqsb))):
             if i.hits:
-                print i.reca.seq
-                print i.recb.revcomp
-                print i.contig
+                pass
+                #print i.contig
             else:
                 # Send to duds
-                print '.',
+                pass
     except KeyboardInterrupt:
-        p.terminate()
+        return
+
 
 def doStitch(recs):
     try:
@@ -46,6 +46,7 @@ def doStitch(recs):
         return Stitch(reca, recb)
     except KeyboardInterrupt:
         return
+
     
 class Stitch:
     def __init__(self, reca, recb):
@@ -61,15 +62,31 @@ class Stitch:
     def _generate_contig(self): 
         if self.qstart < self.sstart:
             self.hits = True
+            
+            self.contig = []
+            
             subject, subqual = self.recb.seq, self.recb.qual
             query, quequal = self.reca.revcomp, self.reca.qual[::-1]
             
-            for nuc in subject:
-                print nuc, 
+            print self.qstart, self.qend, self.sstart, self.send
+            print subject
+            print query
+            
+            # The beginning
+            self.contig.append(subject[0:self.qend-1])
+            
+            # The middle
+            for qn, sn in zip(query, subject):
+                if qn is sn:
+                    self.contig.append(qn)
+                else:
+                    self.contig.append('X')
+            
+            
+            # The end
             
             finalseq, finalqual = [], []
-            contig = { "seq": finalseq, "qual": finalqual}
-            setattr(self, 'contig', contig)
+            #setattr(self, 'contig', contig)
             
             
             

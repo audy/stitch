@@ -31,11 +31,10 @@ class Doubleblast:
         seed()
         fname = 's.%s' % (hex(randint(0,1048575))[2:])
         results = []
-        
-        with open(fname, 'w') as sfile:
-            print >> sfile, '%s' % recb.revcomp
 
         try:
+            with open(fname, 'w') as sfile:
+                print >> sfile, '%s' % recb.revcomp
             pipe = Popen([BLAST,
             '-task', 'blastn-short',
             '-subject', fname,
@@ -44,8 +43,7 @@ class Doubleblast:
             '-strand', 'plus'],
             stdin=PIPE, stdout=PIPE)
             pipe.stdin.write('%s' % reca.seq)
-            hits = pipe.communicate()[0]      
-            
+            hits = pipe.communicate()[0]    
         except OSError:
             raise NoBlast
         finally:
@@ -53,7 +51,7 @@ class Doubleblast:
 
         if not hits:
             return None
-                        
+                    
         for line in hits.split('\n'):
             if not line: continue
             percent_identity, length, mismatches, gap_openings, \
@@ -72,6 +70,4 @@ class Doubleblast:
             results.append(result)
             
         results = sorted(results, key=itemgetter('evalue'))
-
         return results[0]
-        
