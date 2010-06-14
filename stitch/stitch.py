@@ -1,5 +1,6 @@
 from fasta import *
 from doubleblast import *
+from dna import *
 from itertools import izip, imap, dropwhile
 from optparse import *
 from multiprocessing import Pool
@@ -30,8 +31,7 @@ paried-end illumina reads.""",
      
     for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         if i.hits:
-            pass
-            #print i.contig
+            print i.record
         else:
             # Send to duds
             pass
@@ -51,6 +51,8 @@ class Stitch:
         self.reca = reca
         self.recb = recb
         self.hits = False
+        self.contig = []
+        self.quality = []
         results = Doubleblast.query(reca.seq, recb.revcomp)
         
         # BUG: See README.rst
@@ -62,40 +64,36 @@ class Stitch:
             self.result = sorted(results, key=itemgetter('evalue'))[0]
             for key in self.result:
                 setattr(self, key, self.result[key])
-            self._generate_contig()
+            self.record = self._generate_contig()
             
     def _generate_contig(self): 
         ''' Generate le contig '''
-        if self.qstart >= self.sstart:
-            return
+        if self.qstart >= self.sstart: return
+        if self.qstart != 1: return
             
-        print self.raw_output
         self.hits = True
-        self.contig = []
+
         subject, subqual = self.recb.seq, self.recb.qual
-        query, quequal = self.reca.revcomp, self.reca.qual[::-1]
+        query, quequal = self.reca.revcomp, self.reca.qual[::-1]    
+                
+        # The beginning.
+        self.contig.append(query[0:self.sstart])
+        self.quality.append(quequal[0:self.sstart])
         
-        print self.qstart, self.qend, self.sstart, self.send, self.length
-        print subject
-        print query
-        
-        # The beginning
-        self.contig.append(subject[0:self.qend-1])
-        
-        # The middle
-        for qn, sn in zip(query, subject):
-            if qn is sn:
-                self.contig.append(qn)
-            else:
-                self.contig.append('X')
-        
+        # The middle - TODO implement voting.
+        self.contig.append(query[self.sstart:])
+        self.quality.append(quequal[self.sstart:])
         # The end
+        self.contig.append(subject[self.qend:])
+        self.quality.append(subqual[self.qend:])
         
         finalseq, finalqual = [], []
-        #setattr(self, 'contig', contig)
+        self.contig = ''.join(self.contig)
+        self.quality = ''.join(self.quality)
+        
+        return Dna(self.reca.header, self.contig, self.quality)
             
-            
-            
+        
 if __name__ == '__main__':
     try:
         main()
