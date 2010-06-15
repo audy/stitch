@@ -1,13 +1,3 @@
-'''
-dnaobj.py
-
-An object representing a FASTA or FASTQ record.
-
-Austin Glenn Davis-Richardson
-austingdr@gmail.com
-Triplett Lab, University of Florida
-'''
-
 import string
 
 _complement = string.maketrans('GATCRYgatcry','CTAGYRctagyr')
