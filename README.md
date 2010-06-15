@@ -17,17 +17,17 @@ I wrote this script to assemble the overlapping paired ends using BLAST.
    Get it here: <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>
 
 2. Once in the stitch directory do:
-   > $ sudo python setup.py install
+   > `$ sudo python setup.py install`
 
 3. Stitch should have installed successfully meaning that you can now do this:
-   > $ stitch -h
+   > `$ stitch -h`
    to display help information
 
 ## Usage
 
 Do this:
 
-> $ stitch -i fastqfile1 -j fastqfile2
+> `$ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>`
 
 Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
 
