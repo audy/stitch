@@ -1,14 +1,3 @@
-"""
-doubleblast.py
-
-Uses NCBI+ bl2seq to perform a blast between two sequences.
-Takes DNAobjects from dnaobj.py
-
-Austin Glenn Davis-Richardson
-austingdr@gmail.com
-Triplett Lab, University of Florida
-"""
-
 from subprocess import Popen, PIPE
 from random import randint, seed
 from commands import getoutput
