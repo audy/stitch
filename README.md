@@ -27,7 +27,7 @@ I wrote this script to assemble the overlapping paired ends using BLAST.
 
 Do this:
 
-> $ stitch -i fastqfile1 -j fastqfile2
+> `$ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>`
 
 Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
 
