@@ -12,7 +12,7 @@ class NoBlast(Exception):
         return 'BLAST (%s) either not found or wrong version!' % BLAST
 
 class Doubleblast:
-    ''' Doubleblastdoc '''
+    '''  '''
     @classmethod
     def query(self, seqa, seqb):
         ''' bl2seq '''
