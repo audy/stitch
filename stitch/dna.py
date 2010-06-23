@@ -24,6 +24,9 @@ class Dna:
         return len(self.seq)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
+    def __iter__(self):
+        for (i, j) in (self.seq, self.qual):
+            yield i, j
     @property
     def complement(self):
         ''' returns complement of sequence '''
