@@ -71,48 +71,14 @@ class Stitch:
         self.hits = False
         self.contig = []
         self.quality = []
-        results = Doubleblast.query(reca.seq, recb.revcomp)
         
-        # BUG: See README.rst
+        result = self.find_overlaps()
         
-        # Todo: Get rid of results that don't make sense.
+    def find_overlaps(self):
+        ''' Alignment algorithm, returns new DNA object of contig '''
         
-        # Grab most e-valued
-        self.originals = (reca, recb)
-        if results:
-            self.result = sorted(results, key=itemgetter('evalue'))[0]
-            for key in self.result:
-                setattr(self, key, self.result[key])
-            self.record = self._generate_contig()
-
-            
-    def _generate_contig(self): 
-        ''' Generate le contig '''
-        if self.qstart >= self.sstart: return
-        if self.qstart != 1: return
-            
-        self.hits = True
-
-        subject, subqual = self.recb.seq, self.recb.qual
-        query, quequal = self.reca.revcomp, self.reca.qual[::-1]    
-                
-        # The beginning.
-        self.contig.append(query[0:self.sstart])
-        self.quality.append(quequal[0:self.sstart])
         
-        # The middle - TODO implement voting.
-        self.contig.append(query[self.sstart:])
-        self.quality.append(quequal[self.sstart:])
-        # The end
-        self.contig.append(subject[self.qend:])
-        self.quality.append(subqual[self.qend:])
         
-        finalseq, finalqual = [], []
-        self.contig = ''.join(self.contig)
-        self.quality = ''.join(self.quality)
-        
-        return Dna(self.reca.header, self.contig, self.quality)
-            
         
 if __name__ == '__main__':
     try:
