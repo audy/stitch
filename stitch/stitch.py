@@ -38,7 +38,7 @@ paried-end illumina reads.""",
     
     p = Pool()
      
-    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.record:
             numcontigs += 1
@@ -64,11 +64,8 @@ class Stitch:
         ''' Alignment algorithm, returns new DNA object of contig '''
         seqa, seqb = self.reca.seq, self.recb.revcomp
         seqb = self.recb.revcomp
-        
         length = min([len(i) for i in (seqa, seqb)])
-        scores = []
-        
-        hits = {}
+        scores, hits = [], {}
         
         for i in range(len(seqa)):
             score = 0
@@ -77,14 +74,21 @@ class Stitch:
                     score += 1
             hits[score] = i
         
-        
         score = max(hits.keys())
         i = hits[score]
         
-        if ((score > 20)):
-            print 'winner! %s' % (i)
+        if ((score > 30)):
+            print 'winner! %s (score=%s)' % (i, score)
             print seqa + '-'*(i-1)
             print '-'*(i-1) + seqb
+            
+            beg = seqa[0:i-1]
+            
+            for (i, iq), (j, jq) in zip(self.reca, self.recb(\)):
+                print i, iq, j, jq
+            
+            end = seqb[i-1:]
+            
             self.record = self.reca
 
 
