@@ -20,6 +20,8 @@ class Dna:
         else:
             return('@%s\n%s\n+%s\n%s\n') % \
                 (self.header, self.seq, self.header, self.qual)
+    def __len__(self):
+        return len(self.seq)
     def __repr__(self):
         return '<dnaobj.%s instance: %s>' % (self.type, self.header)
     @property
