@@ -1,5 +1,4 @@
 from fasta import *
-from doubleblast import *
 from dna import *
 from itertools import izip, imap, dropwhile
 from optparse import *
@@ -20,7 +19,7 @@ paried-end illumina reads.""",
 
     (options, args) = parser.parse_args()
     
-    if not (options.filea or options.fileb or options.prefix):
+    if not (options.filea and options.fileb and options.prefix):
         print >> sys.stderr, 'Usage: %s %s' % \
             (parser.get_prog_name(), parser.usage)
         sys.exit()
@@ -33,17 +32,15 @@ paried-end illumina reads.""",
     dudsa = open('%s-nh-s1.fastq' % options.prefix, 'w')
     dudsb = open('%s-nh-s2.fastq' % options.prefix, 'w')
     outfile = open('%s-contigs.fastq' % options.prefix , 'w')
+    
     p = Pool()
      
-    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         if i.hits:
             print >> outfile, i.record
             numcontigs += 1
         else:
-            # Send to duds
-            reca, recb = i.originals
-            print >> dudsa, reca
-            print >> dudsb, recb
+            pass
         numtotes += 1
     dudsa.close()
     dudsb.close()
@@ -53,16 +50,6 @@ paried-end illumina reads.""",
         (numcontigs, numcontigs + numtotes)
     
     
-
-
-def doStitch(recs):
-    ''' Used by Pool.imap to create stitch jobs '''
-    try:
-        reca, recb = recs
-        return Stitch(reca, recb)
-    except KeyboardInterrupt:
-        return
-    
 class Stitch:
     ''' Stitches together two overlapping Illumina reads using Doubleblast '''
     def __init__(self, reca, recb):
@@ -71,14 +58,20 @@ class Stitch:
         self.hits = False
         self.contig = []
         self.quality = []
-        
         result = self.find_overlaps()
         
     def find_overlaps(self):
         ''' Alignment algorithm, returns new DNA object of contig '''
-        
-        
-        
+        print self.reca.seq, self.recb.seq
+        raise StopIteration
+
+def doStitch(recs):
+    ''' Used by Pool.imap to create stitch jobs '''
+    try:
+        reca, recb = recs
+        return Stitch(reca, recb)
+    except KeyboardInterrupt:
+        return        
         
 if __name__ == '__main__':
     try:

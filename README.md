@@ -13,13 +13,10 @@ I wrote this script to assemble the overlapping paired ends using BLAST.
 
 ## Installation
 
-1. Make sure you have NCBI's BLAST version 2.2.23 or greater.
-   Get it here: <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>
-
-2. Once in the stitch directory do:
+1. Once in the stitch directory do:
    > `$ sudo python setup.py install`
 
-3. Stitch should have installed successfully meaning that you can now do this:
+2. Stitch should have installed successfully meaning that you can now do this:
    > `$ stitch -h`
    to display help information
 
