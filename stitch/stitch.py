@@ -47,9 +47,10 @@ paried-end illumina reads.""",
             numcontigs += 1
             print >> outfile, i.record,
         else:
-            print >> dudsa, seqsa
-            print >> dudsb, seqsb
-        
+            reca, recb = i.originals
+            print >> dudsa, reca,
+            print >> dudsb, recb,
+            
     duration = time() - starttime
     
     print 'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
@@ -65,6 +66,10 @@ class Stitch:
         self.contig = []
         self.quality = []
         self.find_overlaps()
+        
+    @property
+    def originals(self):
+        return (self.reca, self.recb)
         
     def find_overlaps(self):
         ''' Alignment algorithm, returns new DNA object of contig '''
