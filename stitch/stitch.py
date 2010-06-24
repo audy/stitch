@@ -5,7 +5,8 @@ from optparse import *
 from multiprocessing import Pool
 import os
 import sys
-import time
+from time import time
+
     
 def main():
     ''' Spaghetti & Meatballs '''
@@ -36,18 +37,23 @@ paried-end illumina reads.""",
     
     numcontigs, numtotes = 0, 0
     
-    p = Pool()
-     
+    #p = Pool()
+    
+    starttime = time()
+    
     for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.record:
             numcontigs += 1
+            print >> outfile, i.record,
         else:
-            print 'loser!'
+            print >> dudsa, seqsa
+            print >> dudsb, seqsb
         
+    duration = time() - starttime
     
-    print 'Made %s contigs, out of %s reads' % \
-        (numcontigs, numcontigs + numtotes)
+    print 'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
+        (numcontigs, numtotes, duration, numtotes/duration)
         
     
 class Stitch:
@@ -78,19 +84,37 @@ class Stitch:
         i = hits[score]
         
         if ((score > 30)):
-            print 'winner! %s (score=%s)' % (i, score)
-            print seqa + '-'*(i-1)
-            print '-'*(i-1) + seqb
             
             beg = seqa[0:i-1]
+            end = seqb[-i+1:]
+            qbeg = self.reca.qual[0:i-1]
+            qend = self.recb.qual[-i+1:][::-1]
             
-            for (i, iq), (j, jq) in zip(self.reca, self.recb(\)):
-                print i, iq, j, jq
+            smida = seqa[i-1:]
+            smidb = seqb[0:len(seqb)-i+1]
+            qmida = self.reca.qual[i-1:]
+            qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
             
-            end = seqb[i-1:]
+            # Vote!
+            mid, midq = [], []
+            for (na, qa), (nb, qb) in zip(zip(smida, qmida), zip(smidb, qmidb)):
+                if qa>qb:
+                    mid+=na
+                    midq+=qa
+                elif qa<qb:
+                    mid+=nb
+                    midq+=qb
+                else:
+                    if qa==qb:
+                        mid+=na
+                        midq+=qa
+                    else:
+                        mid+='N'
+                        midq+=qa
             
-            self.record = self.reca
-
+            newseq = beg + ''.join(mid) + end
+            newqual = qbeg + ''.join(midq) + qend
+            self.record = Dna(self.reca.header, newseq, newqual)
 
 
 def doStitch(recs):
