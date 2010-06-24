@@ -9,7 +9,11 @@ Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
 Illumina sequencing has the ability to generate "paired ends."
 We did an experiment where our paired ends overlapped.
-I wrote this script to assemble the overlapping paired ends using BLAST.
+I wrote this script to assemble these overlapping paired ends into contigs.
+
+It does a simple alignment.  Finding the best possible overlap.  The simple
+alignment does not take into account gaps which are uncommon.  This was done
+for simplicity and speed.
 
 ## Installation
 
