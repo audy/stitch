@@ -25,8 +25,8 @@ paried-end illumina reads.""",
     parser.add_option('-p', '--pretty_output', dest='pretty', default=False,
         action='store_true',
         help='displays overlapping contigs in a nice way.')
-    parser.add_option('-s', '--score', dest='score', default=25,
-        help='minimum percent identity (default = 25)', type=int)
+    parser.add_option('-s', '--score', dest='score', default=0.6,
+        help='minimum percent identity (default = 25)', type=float)
 
     (options, args) = parser.parse_args()
     
@@ -48,33 +48,40 @@ paried-end illumina reads.""",
     
     numcontigs, numtotes = 0, 0
     
-    p = Pool(options.threads)
+    #p = Pool(options.threads)
     
     starttime = time()
     overlaps = 0
     
-    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
-        if i.record:
+        if i.score > options.score:
             numcontigs += 1
             overlaps += i.overlap
-            print >> outfile, '%s' % i.record,
+            
+            if options.prefix:
+                print >> outfile, '%s' % i.record
             
             if options.pretty:
-               print >> sys.stderr, i.pretty
+                print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
+                print >> sys.stdout, i.pretty
         else:
             reca, recb = i.originals
-            print >> dudsa, reca,
-            print >> dudsb, recb,
+            
+            if options.prefix:
+                print >> dudsa, reca,
+                print >> dudsb, recb,
             
     duration = time() - starttime
     
     print >> sys.stderr, \
         'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
         (numcontigs, numtotes, duration, numtotes/duration)
-    print >> sys.stderr, \
-        'Average overlap was %.2f' % (float(overlaps)/numcontigs)
-        
+    try:
+        print >> sys.stderr, \
+            'Average overlap was %.2f' % (float(overlaps)/numcontigs)
+    except ZeroDivisionError:
+        print >> sys.stderr, 'no contigs :('
     
 class Stitch:
     ''' Stitches together two overlapping Illumina reads using Doubleblast '''
@@ -84,6 +91,7 @@ class Stitch:
         self.record = False
         self.overlap = 0
         self.pretty = ''
+        self.score = 0.0
         
         self.find_overlaps()
         
@@ -102,48 +110,51 @@ class Stitch:
         for i in range(len(seqa)):
             score = 0
             for na, nb in zip(seqa[i-1:], seqb[:-i+1]):
-                if na == nb:
+                if (na == nb) and ('N' not in (na, nb)):
                     score += 1
             hits[score] = i
         
         score = max(hits.keys())
         i = hits[score]
         
-        self.overlap = score
+        self.overlap = len(seqa) - i
+        self.score = float(score)/(len(seqa)-i)
         
-        if ((score > 25)):
-            beg = seqa[0:i-1]
-            end = seqb[-i+1:]
-            qbeg = self.reca.qual[0:i-1]
-            qend = self.recb.qual[-i+1:][::-1]
-            smida = seqa[i-1:]
-            smidb = seqb[0:len(seqb)-i+1]
-            qmida = self.reca.qual[i-1:]
-            qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
-            mid, midq = [], []
-            
-            for (na, qa), (nb, qb) in \
-                                    zip(zip(smida, qmida), zip(smidb, qmidb)):
-                if qa>qb:
+
+        beg = seqa[0:i-1]
+        end = seqb[-i+1:]
+        qbeg = self.reca.qual[0:i-1]
+        qend = self.recb.qual[-i+1:][::-1]
+        smida = seqa[i-1:]
+        smidb = seqb[0:len(seqb)-i+1]
+        qmida = self.reca.qual[i-1:]
+        qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
+        mid, midq = [], []
+        
+        for (na, qa), (nb, qb) in \
+                                zip(zip(smida, qmida), zip(smidb, qmidb)):
+            if qa>qb:
+                mid+=na
+                midq+=qa
+            elif qa<qb:
+                mid+=nb
+                midq+=qb
+            else:
+                if qa==qb:
                     mid+=na
                     midq+=qa
-                elif qa<qb:
-                    mid+=nb
-                    midq+=qb
                 else:
-                    if qa==qb:
-                        mid+=na
-                        midq+=qa
-                    else:
-                        mid+='N'
-                        midq+=qa
-                        
-            newseq = beg + ''.join(mid) + end
-            newqual = qbeg + ''.join(midq) + qend
+                    mid+='N'
+                    midq+=qa
+                    
+        newseq = beg + ''.join(mid) + end
+        newqual = qbeg + ''.join(midq) + qend
+        
+        self.pretty = '1:%s\n2:%s\nC:%s\n' % \
+                        (seqa + '-'*(i-1),
+                        '-'*(i-1) + seqb, newseq)
             
-            self.pretty = '1:%s\n2:%s\nC:%s\n' % \
-                (seqa + '-'*(i-1), '-'*(i-1) + seqb, newseq)
-            self.record = Dna(self.reca.header, newseq, newqual)
+        self.record = Dna(self.reca.header, newseq, newqual)
 
 
 def doStitch(recs):
@@ -152,7 +163,8 @@ def doStitch(recs):
         reca, recb = recs
         return Stitch(reca, recb)
     except KeyboardInterrupt:
-        return        
+        print 'Ouch!'
+        quit()      
         
 if __name__ == '__main__':
     try:

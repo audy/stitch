@@ -18,7 +18,7 @@ class Dna:
             return ('>%s\nself.sequence\n') % \
                 (self.header, self.seq)
         else:
-            return('@%s\n%s\n+%s\n%s\n') % \
+            return('\n@%s\n%s\n+%s\n%s') % \
                 (self.header, self.seq, self.header, self.qual)
     def __len__(self):
         return len(self.seq)
