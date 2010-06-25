@@ -137,6 +137,12 @@ def doStitch(recs):
         
 if __name__ == '__main__':
     try:
+        pass
+        import psyco
+        psyco.full()
+    except ImportError:
+        pass    
+    try:
         main()
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
