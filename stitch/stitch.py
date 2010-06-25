@@ -48,12 +48,12 @@ paried-end illumina reads.""",
     
     numcontigs, numtotes = 0, 0
     
-    #p = Pool(options.threads)
+    p = Pool(options.threads)
     
     starttime = time()
     overlaps = 0
     
-    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.score > options.score:
             numcontigs += 1
