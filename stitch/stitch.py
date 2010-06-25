@@ -14,9 +14,20 @@ def main():
         description="""Stitch - Tool for creating contigs from overlapping
 paried-end illumina reads.""",
         usage='-i <fastq file 1> -j <fastq file 2> -o <output prefix>')
-    parser.add_option('-i', '--first', dest='filea')
-    parser.add_option('-j', '--second', dest='fileb')
-    parser.add_option('-o', '--output', dest='prefix')
+    parser.add_option('-i', '--first', dest='filea'
+        help='first fastq file')
+    parser.add_option('-j', '--second', dest='fileb'
+        help='second fastq file')
+    parser.add_option('-o', '--output', dest='prefix'
+        help='output prefix (omit to print to stdout)')
+    parser.add_option('-t', '--threads', dest='threads', default=None,
+        type=int, help='number of threads (default = all available)')
+    parser.add_option('-p', '--pretty_output', dest='pretty',
+        help='displays overlapping contigs in a nice way.')
+    parser.add_option('-m', '--overlap', dest='overlap', default=30,
+        help='minimum overlap (default = 30)', type = int)
+    parser.add_option('-s', '--score', dest='score', default=90,
+        help='minimum percent identity (default = 90)' type=int)
 
     (options, args) = parser.parse_args()
     
@@ -37,12 +48,12 @@ paried-end illumina reads.""",
     
     numcontigs, numtotes = 0, 0
     
-    #p = Pool()
+    p = Pool(options.threads)
     
     starttime = time()
     overlaps = 0
     
-    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.record:
             numcontigs += 1
@@ -55,9 +66,11 @@ paried-end illumina reads.""",
             
     duration = time() - starttime
     
-    print 'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
+    print >> sys.stderr, \
+        'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
         (numcontigs, numtotes, duration, numtotes/duration)
-    print 'Average overlap was %.2f' % (float(overlaps)/numcontigs)
+    print >> sys.stderr, \
+        'Average overlap was %.2f' % (float(overlaps)/numcontigs)
         
     
 class Stitch:
@@ -68,6 +81,7 @@ class Stitch:
         self.record = False
         self.overlap = 0
         self.find_overlaps()
+        self.pretty = ''
         
     @property
     def originals(self):
