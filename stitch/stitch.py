@@ -14,22 +14,22 @@ def main():
         description="""Stitch - Tool for creating contigs from overlapping
 paried-end illumina reads.""",
         usage='-i <fastq file 1> -j <fastq file 2> -o <output prefix>')
-    parser.add_option('-i', '--first', dest='filea'
+    parser.add_option('-i', '--first', dest='filea',
         help='first fastq file')
-    parser.add_option('-j', '--second', dest='fileb'
+    parser.add_option('-j', '--second', dest='fileb',
         help='second fastq file')
-    parser.add_option('-o', '--output', dest='prefix'
+    parser.add_option('-o', '--output', dest='prefix',
         help='output prefix (omit to print to stdout)')
     parser.add_option('-t', '--threads', dest='threads', default=None,
         type=int, help='number of threads (default = all available)')
-    parser.add_option('-p', '--pretty_output', dest='pretty',
+    parser.add_option('-p', '--pretty_output', dest='pretty', default=False,
+        action='store_true',
         help='displays overlapping contigs in a nice way.')
-    parser.add_option('-m', '--overlap', dest='overlap', default=30,
-        help='minimum overlap (default = 30)', type = int)
-    parser.add_option('-s', '--score', dest='score', default=90,
-        help='minimum percent identity (default = 90)' type=int)
+    parser.add_option('-s', '--score', dest='score', default=25,
+        help='minimum percent identity (default = 25)', type=int)
 
     (options, args) = parser.parse_args()
+    
     
     if not (options.filea and options.fileb):
         print >> sys.stderr, 'Usage: %s %s' % \
@@ -59,6 +59,9 @@ paried-end illumina reads.""",
             numcontigs += 1
             overlaps += i.overlap
             print >> outfile, '%s' % i.record,
+            
+            if options.pretty:
+               print >> sys.stderr, i.pretty
         else:
             reca, recb = i.originals
             print >> dudsa, reca,
@@ -80,8 +83,9 @@ class Stitch:
         self.recb = recb
         self.record = False
         self.overlap = 0
-        self.find_overlaps()
         self.pretty = ''
+        
+        self.find_overlaps()
         
     @property
     def originals(self):
@@ -94,6 +98,7 @@ class Stitch:
         length = min([len(i) for i in (seqa, seqb)])
         scores, hits = [], {}
         
+        # Find overlap
         for i in range(len(seqa)):
             score = 0
             for na, nb in zip(seqa[i-1:], seqb[:-i+1]):
@@ -107,20 +112,18 @@ class Stitch:
         self.overlap = score
         
         if ((score > 25)):
-            
             beg = seqa[0:i-1]
             end = seqb[-i+1:]
             qbeg = self.reca.qual[0:i-1]
             qend = self.recb.qual[-i+1:][::-1]
-            
             smida = seqa[i-1:]
             smidb = seqb[0:len(seqb)-i+1]
             qmida = self.reca.qual[i-1:]
             qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
-            
-            # Vote!
             mid, midq = [], []
-            for (na, qa), (nb, qb) in zip(zip(smida, qmida), zip(smidb, qmidb)):
+            
+            for (na, qa), (nb, qb) in \
+                                    zip(zip(smida, qmida), zip(smidb, qmidb)):
                 if qa>qb:
                     mid+=na
                     midq+=qa
@@ -134,10 +137,12 @@ class Stitch:
                     else:
                         mid+='N'
                         midq+=qa
-            
+                        
             newseq = beg + ''.join(mid) + end
             newqual = qbeg + ''.join(midq) + qend
-            # Would it be faster to recycle an object?
+            
+            self.pretty = '1:%s\n2:%s\nC:%s\n' % \
+                (seqa + '-'*(i-1), '-'*(i-1) + seqb, newseq)
             self.record = Dna(self.reca.header, newseq, newqual)
 
 
