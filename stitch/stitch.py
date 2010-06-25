@@ -40,12 +40,14 @@ paried-end illumina reads.""",
     #p = Pool()
     
     starttime = time()
+    overlaps = 0
     
     for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.record:
             numcontigs += 1
-            print >> outfile, i.record,
+            overlaps += i.overlap
+            print >> outfile, '%s' % i.record,
         else:
             reca, recb = i.originals
             print >> dudsa, reca,
@@ -55,6 +57,7 @@ paried-end illumina reads.""",
     
     print 'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
         (numcontigs, numtotes, duration, numtotes/duration)
+    print 'Average overlap was %.2f' % (float(overlaps)/numcontigs)
         
     
 class Stitch:
@@ -63,8 +66,7 @@ class Stitch:
         self.reca = reca
         self.recb = recb
         self.record = False
-        self.contig = []
-        self.quality = []
+        self.overlap = 0
         self.find_overlaps()
         
     @property
@@ -88,7 +90,9 @@ class Stitch:
         score = max(hits.keys())
         i = hits[score]
         
-        if ((score > 30)):
+        self.overlap = score
+        
+        if ((score > 25)):
             
             beg = seqa[0:i-1]
             end = seqb[-i+1:]
@@ -119,6 +123,7 @@ class Stitch:
             
             newseq = beg + ''.join(mid) + end
             newqual = qbeg + ''.join(midq) + qend
+            # Would it be faster to recycle an object?
             self.record = Dna(self.reca.header, newseq, newqual)
 
 
