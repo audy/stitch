@@ -9,27 +9,8 @@ from time import time
 
     
 def main():
-    ''' Spaghetti & Meatballs '''
-    parser = OptionParser(
-        description="""Stitch - Tool for creating contigs from overlapping
-paried-end illumina reads.""",
-        usage='-i <fastq file 1> -j <fastq file 2> -o <output prefix>')
-    parser.add_option('-i', '--first', dest='filea',
-        help='first fastq file')
-    parser.add_option('-j', '--second', dest='fileb',
-        help='second fastq file')
-    parser.add_option('-o', '--output', dest='prefix',
-        help='output prefix (omit to print to stdout)')
-    parser.add_option('-t', '--threads', dest='threads', default=None,
-        type=int, help='number of threads (default = all available)')
-    parser.add_option('-p', '--pretty_output', dest='pretty', default=False,
-        action='store_true',
-        help='displays overlapping contigs in a nice way.')
-    parser.add_option('-s', '--score', dest='score', default=0.6,
-        help='minimum percent identity (default = 25)', type=float)
-
-    (options, args) = parser.parse_args()
-    
+    ''' The Meat & Potatoes '''
+    (options, args) = getArgs()
     
     if not (options.filea and options.fileb):
         print >> sys.stderr, 'Usage: %s %s' % \
@@ -60,7 +41,7 @@ paried-end illumina reads.""",
             overlaps += i.overlap
             
             if options.prefix:
-                print >> outfile, '%s' % i.record
+                print >> outfile, '%s' % i.record,
             
             if options.pretty:
                 print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
@@ -92,7 +73,7 @@ class Stitch:
         self.overlap = 0
         self.pretty = ''
         self.score = 0.0
-        
+
         self.find_overlaps()
         
     @property
@@ -119,7 +100,6 @@ class Stitch:
         
         self.overlap = len(seqa) - i
         self.score = float(score)/(len(seqa)-i)
-        
 
         beg = seqa[0:i-1]
         end = seqb[-i+1:]
@@ -132,7 +112,7 @@ class Stitch:
         mid, midq = [], []
         
         for (na, qa), (nb, qb) in \
-                                zip(zip(smida, qmida), zip(smidb, qmidb)):
+                        zip(zip(smida, qmida), zip(smidb, qmidb)):
             if qa>qb:
                 mid+=na
                 midq+=qa
@@ -156,6 +136,27 @@ class Stitch:
             
         self.record = Dna(self.reca.header, newseq, newqual)
 
+def getArgs():
+    ''' Spaghetti & Meatballs '''
+    parser = OptionParser(
+        description="""Stitch - Tool for creating contigs from overlapping
+        paried-end illumina reads.""",
+        usage='-i <fastq file 1> -j <fastq file 2> -o <output prefix>')
+    parser.add_option('-i', '--first', dest='filea',
+        help='first fastq file')
+    parser.add_option('-j', '--second', dest='fileb',
+        help='second fastq file')
+    parser.add_option('-o', '--output', dest='prefix',
+        help='output prefix (omit to print to stdout)')
+    parser.add_option('-t', '--threads', dest='threads', default=None,
+        type=int, help='number of threads (default = all available)')
+    parser.add_option('-p', '--pretty_output', dest='pretty', default=False,
+        action='store_true',
+        help='displays overlapping contigs in a nice way.')
+    parser.add_option('-s', '--score', dest='score', default=0.6,
+        help='minimum percent identity (default = 25)', type=float)
+        
+    return parser.parse_args()
 
 def doStitch(recs):
     ''' Used by Pool.imap to create stitch jobs '''
