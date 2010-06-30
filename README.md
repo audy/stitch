@@ -15,6 +15,14 @@ It does a simple alignment.  Finding the best possible overlap.  The simple
 alignment does not take into account gaps which are uncommon.  This was done
 for simplicity and speed.
 
+### Score Calculation:
+
+Scores are calculated with the following equation:
+
+`(matches-in-overlap) / (length-of-overlap)`
+
+The default is 0.6 meaning that 60% of the bases in the overlap matched.  Stitch calculates all possible overlaps and chooses the one with the highest score.  Matches of `N` to `N` are not counted.
+
 ## Installation
 
 1. Once in the stitch directory do:
@@ -32,9 +40,18 @@ Do this:
 
 Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
 
+Other options:
+
+ - `-h` prints help
+ - `-t [THREADS]` specify number of cores to use (Default=all)
+ - `-s [SCORE]` minimum score (Default=0.6)
+ - `-p pretty output` prints a user-friendly output.  Useful for adjusting
+   score.
+
 ## Bugs
 
  - Don't know of any at the moment
+   if you find one, [let me know]!(https://github.com/audy/stitch/issues) thx.
 
 ## Features
 
