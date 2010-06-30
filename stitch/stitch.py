@@ -1,3 +1,13 @@
+# STITCH
+#  Constructs contigs from overlapping paired-end Illumina sequencing reads.
+
+# Austin G. Davis-Richardson
+#  adavisr@ufl.edu
+#  working under Drs. Adriana Giongo & Eric Triplett
+#  at The University of Florida, Gainesville, FL, USA
+
+# https://www.github.com/audy/stitch
+
 from fasta import *
 from dna import *
 from itertools import izip, imap, dropwhile
@@ -7,7 +17,6 @@ import os
 import sys
 from time import time
 
-    
 def main():
     ''' The Meat & Potatoes '''
     (options, args) = getArgs()
