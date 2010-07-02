@@ -19,9 +19,7 @@ class Fasta:
                     rec[counter] = line.strip()
                     counter = 0
                     yield Dna(rec[0], rec[1], rec[3])                    
-        elif self.filetype == 'fasta':
-            # implement this later
-            pass
+
 
 class Dna:
     ''' An object representing either a FASTA or FASTQ record '''
@@ -33,6 +31,11 @@ class Dna:
             self.type = 'fastq'
         else:
             self.type = 'fasta'
+
+        if len(self.seq) != len(self.qual):
+            raise IOError, \
+                'Seq length and qual length do not agree: %s' % (self.header)
+
     def __str__(self):
         ''' returns a FASTA/Q formatted string '''
         if not self.qual:
