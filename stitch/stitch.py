@@ -19,8 +19,10 @@ from time import time
 
 def main():
     ''' The Meat & Potatoes '''
+    # Parse the Opts
     (options, args) = getArgs()
     
+    # Open output files if requested.
     if not (options.filea and options.fileb):
         print >> sys.stderr, 'Usage: %s %s' % \
             (parser.get_prog_name(), parser.usage)
@@ -36,13 +38,12 @@ def main():
     seqsa = open(options.filea, 'r')
     seqsb = open(options.fileb, 'r')
     
-    numcontigs, numtotes = 0, 0
-    
+    # Ready.. Set..
+    numcontigs, numtotes, overlaps = 0, 0, 0
+    starttime = time()    
     p = Pool(options.threads)
     
-    starttime = time()
-    overlaps = 0
-    
+    # Go!
     for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.score > options.score:
@@ -61,9 +62,10 @@ def main():
             if options.prefix:
                 print >> dudsa, reca,
                 print >> dudsb, recb,
-            
-    duration = time() - starttime
     
+    
+    # Clean-up & inform the user        
+    duration = time() - starttime
     print >> sys.stderr, \
         'Made %s contigs out of %s reads in %.2f seconds (%.2f per sec)' % \
         (numcontigs, numtotes, duration, numtotes/duration)
@@ -172,7 +174,7 @@ def doStitch(recs):
     try:
         reca, recb = recs
         return Stitch(reca, recb)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: # This doesn't really work with Pool()
         print 'Ouch!'
         quit()      
         
