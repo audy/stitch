@@ -63,7 +63,6 @@ def main():
                 print >> dudsa, reca,
                 print >> dudsb, recb,
     
-    
     # Clean-up & inform the user        
     duration = time() - starttime
     print >> sys.stderr, \
@@ -74,6 +73,7 @@ def main():
             'Average overlap was %.2f' % (float(overlaps)/numcontigs)
     except ZeroDivisionError:
         print >> sys.stderr, 'no contigs :('
+        
     
 class Stitch:
     ''' Stitches together two overlapping Illumina reads using Doubleblast '''
@@ -84,7 +84,6 @@ class Stitch:
         self.overlap = 0
         self.pretty = ''
         self.score = 0.0
-
         self.find_overlaps()
         
     @property
@@ -102,8 +101,9 @@ class Stitch:
         for i in range(len(seqa)):
             score = 0
             for na, nb in zip(seqa[i-1:], seqb[:-i+1]):
-                if (na == nb) and ('N' not in (na, nb)):
-                    score += 1
+                if ('N' in (na, nb)): continue
+                if (na == nb): score += 1
+                if (na != nb): score -= 1
             hits[score] = i
         
         score = max(hits.keys())
@@ -124,19 +124,19 @@ class Stitch:
         
         for (na, qa), (nb, qb) in \
                         zip(zip(smida, qmida), zip(smidb, qmidb)):
-            if qa>qb:
-                mid+=na
-                midq+=qa
-            elif qa<qb:
-                mid+=nb
-                midq+=qb
+            if qa > qb:
+                mid += na
+                midq += qa
+            elif qa < qb:
+                mid += nb
+                midq += qb
             else:
-                if qa==qb:
-                    mid+=na
-                    midq+=qa
+                if qa == qb:
+                    mid += na
+                    midq += qa
                 else:
-                    mid+='N'
-                    midq+=qa
+                    mid += 'N'
+                    midq += qa
                     
         newseq = beg + ''.join(mid) + end
         newqual = qbeg + ''.join(midq) + qend
