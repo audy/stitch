@@ -8,20 +8,26 @@
 
 # https://www.github.com/audy/stitch
 
-from fasta import *
+from fasta import Dna, Fasta
 from itertools import izip, imap, dropwhile
-from optparse import *
 from multiprocessing import Pool
 import os
 import sys
 from time import time
 
-def main():
-    ''' The Meat & Potatoes '''
-    # Parse the Opts
-    parser = getArgs()
-    (options, args) = parser.parse_args()
+
+def stitch(*args, **kwargs):
+    ''' The stitcher '''
     
+    class Options:
+        ''' dummy object used when not invoked from commandline'''
+        def __init__(self):
+            pass
+            
+    options = Options
+    for k in kwargs['options']:
+        setattr(options, k, kwargs['options'][k])
+
     # Open output files if requested.
     if not (options.filea and options.fileb):
         print >> sys.stderr, 'Usage: %s %s' % \
@@ -180,7 +186,10 @@ def doStitch(recs):
         
 if __name__ == '__main__':
     try:
-        main()
+        from optparse import *
+        parser = getArgs()
+        (options, args) = parser.parse_args()
+        stitch(options=options.__dict__)
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
         quit()
