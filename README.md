@@ -19,10 +19,35 @@ for simplicity and speed.
 
 Scores are calculated with the following equation:
 
-`(matches-in-overlap) / (length-of-overlap)`
+`matches - mismatches / (length-of-overlap)`
 
-The default is 0.6 meaning that 60% of the bases in the overlap matched.  Stitch calculates all possible overlaps and chooses the one with the highest score.  Matches of `N` to `N` are not counted.
+The default is 0.6 meaning that 60% of the bases in the overlap matched.
+Stitch calculates all possible overlaps and chooses the one with
+the highest score.  Matches of `N` to `N` are not counted.
 
+### Pipelineing
+
+* Importing from Python:
+
+		from stitch import *
+		stitch(options={
+	  	'filea': 'filenamea',
+	  	'fileb': 'filenameb',
+	  	'prefix': 'data/stitched.fastq',
+	  	'pretty': False,
+	  	'threads': None,
+	  	'score': None })
+		
+* You could also just use `subprocess.Popen`:
+
+		from subprocess import Popen
+		Popen.(['stitch','-i','filea','-j','fileb','-o','output'])
+
+* Or from Ruby/Perl:
+
+		system('stitch -i filea -j fileb -o output')
+    
+		
 ## Installation
 
 1. Once in the stitch directory do:
