@@ -9,7 +9,6 @@
 # https://www.github.com/audy/stitch
 
 from fasta import *
-from dna import *
 from itertools import izip, imap, dropwhile
 from optparse import *
 from multiprocessing import Pool
@@ -20,7 +19,8 @@ from time import time
 def main():
     ''' The Meat & Potatoes '''
     # Parse the Opts
-    (options, args) = getArgs()
+    parser = getArgs()
+    (options, args) = parser.parse_args()
     
     # Open output files if requested.
     if not (options.filea and options.fileb):
@@ -167,7 +167,7 @@ def getArgs():
     parser.add_option('-s', '--score', dest='score', default=0.6,
         help='minimum percent identity (default = 25)', type=float)
         
-    return parser.parse_args()
+    return parser
 
 def doStitch(recs):
     ''' Used by Pool.imap to create stitch jobs '''
