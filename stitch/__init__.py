@@ -1,1 +1,1 @@
-import stitch
+from stitch import *
