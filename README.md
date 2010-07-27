@@ -25,7 +25,7 @@ The default is 0.6 meaning that 60% of the bases in the overlap matched.
 Stitch calculates all possible overlaps and chooses the one with
 the highest score.  Matches of `N` to `N` are not counted.
 
-### Pipelineing
+## Pipelineing
 
 * Importing from Python:
 
