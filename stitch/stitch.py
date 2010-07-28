@@ -57,7 +57,7 @@ def stitch(*args, **kwargs):
             overlaps += i.overlap
             
             if options.prefix:
-                print >> outfile, '%s' % i.record,
+                print >> outfile, '%s' % i.record
             
             if options.pretty:
                 print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
@@ -66,8 +66,8 @@ def stitch(*args, **kwargs):
             reca, recb = i.originals
             
             if options.prefix:
-                print >> dudsa, reca,
-                print >> dudsb, recb,
+                print >> dudsa, reca
+                print >> dudsb, recb
     
     # Clean-up & inform the user        
     duration = time() - starttime
@@ -76,9 +76,9 @@ def stitch(*args, **kwargs):
         (numcontigs, numtotes, duration, numtotes/duration)
     try:
         print >> sys.stderr, \
-            'Average overlap was %.2f' % (float(overlaps)/numcontigs)
+            'Average overlap was %.2f\n' % (float(overlaps)/numcontigs)
     except ZeroDivisionError:
-        print >> sys.stderr, 'no contigs :('
+        print >> sys.stderr, 'no contigs :(\n'
         
     
 class Stitch:
