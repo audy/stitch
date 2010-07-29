@@ -18,7 +18,6 @@ from time import time
 
 def stitch(*args, **kwargs):
     ''' The stitcher '''
-    var = ('filea', 'fileb', 'prefix', 'score', 'pretty', 'threads', 'prefix')
     
     filea = kwargs.get('filea')
     fileb = kwargs.get('fileb')
@@ -28,9 +27,8 @@ def stitch(*args, **kwargs):
     threads = kwargs.get('threads', None)
     prefix = kwargs.get('prefix', None)
 
-            
     if not (filea or fileb):
-        raise Exception
+        raise Exception, 'stitch(filea=\'filea\', fileb=\'fileb\')'
             
     if prefix:
         dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
@@ -150,6 +148,7 @@ class Stitch:
         self.record = Dna(self.reca.header, newseq, newqual)
 
 def getArgs():
+    from optparse import OptionParser
     ''' Spaghetti & Meatballs '''
     parser = OptionParser(
         description="""Stitch - Tool for creating contigs from overlapping
@@ -179,9 +178,8 @@ def doStitch(recs):
     except KeyboardInterrupt: # This doesn't really work with Pool()
         print 'Ouch!'
         quit()      
-        
-if __name__ == '__main__':
-    from optparse import *
+
+def main():
     parser = getArgs()
     (options, args) = parser.parse_args()
     if not (options.filea and options.fileb):
@@ -201,3 +199,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
         quit()
+            
+if __name__ == '__main__':
+    main()

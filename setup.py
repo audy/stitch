@@ -22,7 +22,7 @@ setup(
     
     entry_points = {
         'console_scripts': [ 
-            'stitch = stitch.stitch:stitch',
+            'stitch = stitch.stitch:main',
             ]
     }
 
