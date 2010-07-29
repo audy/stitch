@@ -18,17 +18,24 @@ from time import time
 
 def stitch(*args, **kwargs):
     ''' The stitcher '''
+    var = ('filea', 'fileb', 'prefix', 'score', 'pretty', 'threads', 'prefix')
     
-    filea = kwargs['filea']
-    fileb = kwargs['fileb']
-    prefix = kwargs['prefix']
-    score = kwargs['score']
-    pretty = kwargs['pretty']
-    threads = kwargs['threads']
+    filea = kwargs.get('filea')
+    fileb = kwargs.get('fileb')
+    prefix = kwargs.get('prefix', None)
+    score = kwargs.get('score', 0.6)
+    pretty = kwargs.get('pretty', None)
+    threads = kwargs.get('threads', None)
+    prefix = kwargs.get('prefix', None)
 
-    dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
-    dudsb = open('%s-nh-s2.fastq' % prefix, 'w')
-    outfile = open('%s-contigs.fastq' % prefix , 'w')
+            
+    if not (filea or fileb):
+        raise Exception
+            
+    if prefix:
+        dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
+        dudsb = open('%s-nh-s2.fastq' % prefix, 'w')
+        outfile = open('%s-contigs.fastq' % prefix , 'w')
 
     seqsa = open(filea, 'r')
     seqsb = open(fileb, 'r')
@@ -174,7 +181,6 @@ def doStitch(recs):
         quit()      
         
 if __name__ == '__main__':
-
     from optparse import *
     parser = getArgs()
     (options, args) = parser.parse_args()
@@ -185,7 +191,6 @@ if __name__ == '__main__':
     if not (options.prefix):
         print >> sys.stderr, 'Warning: no outputfile'
         dudsa, dudsb, outfile = sys.stdout, sys.stdout, sys.stdout
-    
     try:
         stitch(filea=options.filea,
                fileb=options.fileb,
