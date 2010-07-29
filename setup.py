@@ -11,7 +11,7 @@ setup(
     version="1.0.0",
     author="Austin G. Davis-Richardson",
     author_email="harekrishna@gmail.com",
-    description="Paired end assembler for Illumina sequencing",
+    description="Assembler for Illumina Overlapping Paired-End Reads",
     url="http://www.github.com/audy/stitch",
     license="GPLv3",
     long_description=DOC,
