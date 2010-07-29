@@ -19,53 +19,42 @@ from time import time
 def stitch(*args, **kwargs):
     ''' The stitcher '''
     
-    class Options:
-        ''' dummy object used when not invoked from commandline'''
-        def __init__(self):
-            pass
-            
-    options = Options
-    for k in kwargs['options']:
-        setattr(options, k, kwargs['options'][k])
+    filea = kwargs['filea']
+    fileb = kwargs['fileb']
+    prefix = kwargs['prefix']
+    score = kwargs['score']
+    pretty = kwargs['pretty']
+    threads = kwargs['threads']
 
-    # Open output files if requested.
-    if not (options.filea and options.fileb):
-        print >> sys.stderr, 'Usage: %s %s' % \
-            (parser.get_prog_name(), parser.usage)
-        sys.exit()
-    if not (options.prefix):
-        print >> sys.stderr, 'Warning: no outputfile'
-        dudsa, dudsb, outfile = sys.stdout, sys.stdout, sys.stdout
-    else:
-        dudsa = open('%s-nh-s1.fastq' % options.prefix, 'w')
-        dudsb = open('%s-nh-s2.fastq' % options.prefix, 'w')
-        outfile = open('%s-contigs.fastq' % options.prefix , 'w')
+    dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
+    dudsb = open('%s-nh-s2.fastq' % prefix, 'w')
+    outfile = open('%s-contigs.fastq' % prefix , 'w')
 
-    seqsa = open(options.filea, 'r')
-    seqsb = open(options.fileb, 'r')
+    seqsa = open(filea, 'r')
+    seqsb = open(fileb, 'r')
     
     # Ready.. Set..
     numcontigs, numtotes, overlaps = 0, 0, 0
     starttime = time()    
-    p = Pool(options.threads)
+    p = Pool(threads)
     
     # Go!
     for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
-        if i.score > options.score:
+        if i.score > score:
             numcontigs += 1
             overlaps += i.overlap
             
-            if options.prefix:
+            if prefix:
                 print >> outfile, '%s' % i.record
             
-            if options.pretty:
+            if pretty:
                 print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
                 print >> sys.stdout, i.pretty
         else:
             reca, recb = i.originals
             
-            if options.prefix:
+            if prefix:
                 print >> dudsa, reca
                 print >> dudsb, recb
     
@@ -185,11 +174,25 @@ def doStitch(recs):
         quit()      
         
 if __name__ == '__main__':
+
+    from optparse import *
+    parser = getArgs()
+    (options, args) = parser.parse_args()
+    if not (options.filea and options.fileb):
+        print >> sys.stderr, 'Usage: %s %s' % \
+            (parser.get_prog_name(), parser.usage)
+        sys.exit()
+    if not (options.prefix):
+        print >> sys.stderr, 'Warning: no outputfile'
+        dudsa, dudsb, outfile = sys.stdout, sys.stdout, sys.stdout
+    
     try:
-        from optparse import *
-        parser = getArgs()
-        (options, args) = parser.parse_args()
-        stitch(options=options.__dict__)
+        stitch(filea=options.filea,
+               fileb=options.fileb,
+               prefix=options.prefix,
+               threads=options.threads,
+               pretty=options.pretty,
+               score=options.score)
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
         quit()
