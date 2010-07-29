@@ -8,10 +8,10 @@ Working under Dr. Eric Triplett & Dr. Adriana Giongo
 ## Description:
 
 Illumina sequencing has the ability to generate "paired ends."
-We did an experiment where our paired ends overlapped.
+We did an experiment where our paired ends overlapped;
 I wrote this script to assemble these overlapping paired ends into contigs.
 
-It does a simple alignment.  Finding the best possible overlap.  The simple
+It does a simple alignment finding the best possible overlap.  The simple
 alignment does not take into account gaps which are uncommon.  This was done
 for simplicity and speed.
 
@@ -21,13 +21,15 @@ Scores are calculated with the following equation:
 
 `matches - mismatches / (length-of-overlap)`
 
-The default is 0.6 meaning that 60% of the bases in the overlap matched.
+The default minimum score is 0.6 (60%).
+
 Stitch calculates all possible overlaps and chooses the one with
-the highest score.  Matches of `N` to `N` are not counted.
+the highest score.  Any matches/mismatches containing an `N` do not
+contribute to the score.
 
 ## Pipelineing
 
-* Importing from Python:
+* Importing from Python (this will be improved, see stitch on github):
 
 		from stitch import *
 		stitch(options={
@@ -61,9 +63,11 @@ the highest score.  Matches of `N` to `N` are not counted.
 
 Do this:
 
-> `$ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>`
+    $ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>
 
-Where `fastqfile1` is the 5' most and `fastqfile2` is the 3' most.
+Where `<fastqfile1>` is the 5' most and `<fastqfile2>` is the 3' most.
+
+`<outputprefix>` will result in three files: contigs, and two files for rejects
 
 Other options:
 
