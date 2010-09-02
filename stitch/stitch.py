@@ -174,7 +174,7 @@ def getArgs():
         help='displays overlapping contigs in a nice way.')
     parser.add_option('-s', '--score', dest='score', default=0.6,
         help='minimum percent identity (default = 25)', type=float)
-    parser.add_option('-b', '--table', dest='table', defeault=None,
+    parser.add_option('-b', '--table', dest='table', default=None,
         help='output overlap length to a text file')
         
     return parser
@@ -204,7 +204,7 @@ def main():
                prefix=options.prefix,
                threads=options.threads,
                pretty=options.pretty,
-               score=options.score
+               score=options.score,
                table=options.table)
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
