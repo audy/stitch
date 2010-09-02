@@ -61,7 +61,7 @@ def stitch(*args, **kwargs):
                 print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
                 print >> sys.stdout, i.pretty
                 
-            if i.table:
+            if table:
                 print >> htable, i.overlap
         else:
             reca, recb = i.originals
