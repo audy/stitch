@@ -25,7 +25,8 @@ def stitch(*args, **kwargs):
     score = kwargs.get('score', 0.6)
     pretty = kwargs.get('pretty', None)
     threads = kwargs.get('threads', None)
-    prefix = kwargs.get('prefix', None)
+    table = kwargs.get('table', None)
+    
 
     if not (filea or fileb):
         raise Exception, 'stitch(filea=\'filea\', fileb=\'fileb\')'
@@ -34,6 +35,9 @@ def stitch(*args, **kwargs):
         dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
         dudsb = open('%s-nh-s2.fastq' % prefix, 'w')
         outfile = open('%s-contigs.fastq' % prefix , 'w')
+        
+    if table:
+        htable = open(table, 'w')
 
     seqsa = open(filea, 'r')
     seqsb = open(fileb, 'r')
@@ -56,6 +60,9 @@ def stitch(*args, **kwargs):
             if pretty:
                 print >> sys.stdout, '>%s (%.3f)' % (i.reca.header, i.score)
                 print >> sys.stdout, i.pretty
+                
+            if i.table:
+                print >> htable, i.overlap
         else:
             reca, recb = i.originals
             
@@ -167,6 +174,8 @@ def getArgs():
         help='displays overlapping contigs in a nice way.')
     parser.add_option('-s', '--score', dest='score', default=0.6,
         help='minimum percent identity (default = 25)', type=float)
+    parser.add_option('-b', '--table', dest='table', defeault=None,
+        help='output overlap length to a text file')
         
     return parser
 
@@ -195,7 +204,8 @@ def main():
                prefix=options.prefix,
                threads=options.threads,
                pretty=options.pretty,
-               score=options.score)
+               score=options.score
+               table=options.table)
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
         quit()
