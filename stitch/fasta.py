@@ -43,7 +43,7 @@ class Dna:
                 (self.header, self.seq)
         else:
             return('@%s\n%s\n+%s\n%s') % \
-                (self.header, self.seq, self.header, self.qual)
+                (self.header, self.seq, '', self.qual)
     def __len__(self):
         return len(self.seq)
     def __repr__(self):

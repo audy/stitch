@@ -13,6 +13,8 @@ from itertools import izip, imap, dropwhile
 from multiprocessing import Pool
 import os
 import sys
+import gzip
+import re
 from time import time
 
 
@@ -22,7 +24,8 @@ def stitch(*args, **kwargs):
     filea = kwargs.get('filea')
     fileb = kwargs.get('fileb')
     prefix = kwargs.get('prefix', None)
-    score = kwargs.get('score', 0.6)
+    score = kwargs.get('score', 0.92)
+    overlap = kwargs.get('overlap', 12)
     pretty = kwargs.get('pretty', None)
     threads = kwargs.get('threads', None)
     table = kwargs.get('table', None)
@@ -32,16 +35,23 @@ def stitch(*args, **kwargs):
         raise Exception, 'stitch(filea=\'filea\', fileb=\'fileb\')'
             
     if prefix:
-        dudsa = open('%s-nh-s1.fastq' % prefix, 'w')
-        dudsb = open('%s-nh-s2.fastq' % prefix, 'w')
-        outfile = open('%s-contigs.fastq' % prefix , 'w')
+        dudsa = gzip.open('%s-nh-s1.fastq.gz' % prefix, 'w')
+        dudsb = gzip.open('%s-nh-s2.fastq.gz' % prefix, 'w')
+        outfile = gzip.open('%s-contigs.fastq.gz' % prefix , 'w')
         
     if table:
         htable = open(table, 'w')
 
-    seqsa = open(filea, 'r')
-    seqsb = open(fileb, 'r')
-    
+    if re.search(r'\.gz$',filea, re.I):
+        seqsa = gzip.open(filea, 'r')
+    else:
+        seqsa = open(filea, 'r')
+
+    if re.search(r'\.gz$',fileb, re.I):
+        seqsb = gzip.open(fileb, 'r')
+    else:
+        seqsb = open(fileb, 'r')
+
     # Ready.. Set..
     numcontigs, numtotes, overlaps = 0, 0, 0
     starttime = time()    
@@ -50,7 +60,7 @@ def stitch(*args, **kwargs):
     # Go!
     for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
-        if i.score > score:
+        if (i.score >= score) and (i.overlap >= overlap):
             numcontigs += 1
             overlaps += i.overlap
             
@@ -116,17 +126,17 @@ class Stitch:
         score = max(hits.keys())
         i = hits[score]
         
-        self.overlap = len(seqa) - i
-        self.score = float(score)/(len(seqa)-i)
+        self.overlap = len(seqa) - i + 1
+        self.score = float(score)/self.overlap
 
         beg = seqa[0:i-1]
-        end = seqb[-i+1:]
+        end = seqb[self.overlap:]
         qbeg = self.reca.qual[0:i-1]
-        qend = self.recb.qual[-i+1:][::-1]
+        qend = self.recb.qual[self.overlap:][::-1]
         smida = seqa[i-1:]
-        smidb = seqb[0:len(seqb)-i+1]
+        smidb = seqb[0:self.overlap]
         qmida = self.reca.qual[i-1:]
-        qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
+        qmidb = self.recb.qual[0:self.overlap][::-1]
         mid, midq = [], []
         
         for (na, qa), (nb, qb) in \
@@ -149,7 +159,7 @@ class Stitch:
         newqual = qbeg + ''.join(midq) + qend
         
         self.pretty = '1:%s\n2:%s\nC:%s\n' % \
-                        (seqa + '-'*(i-1),
+                        (seqa + '-'*(len(seqb)-self.overlap),
                         '-'*(i-1) + seqb, newseq)
             
         self.record = Dna(self.reca.header, newseq, newqual)
@@ -172,11 +182,12 @@ def getArgs():
     parser.add_option('-p', '--pretty_output', dest='pretty', default=False,
         action='store_true',
         help='displays overlapping contigs in a nice way.')
-    parser.add_option('-s', '--score', dest='score', default=0.6,
-        help='minimum percent identity (default = 25)', type=float)
+    parser.add_option('-s', '--score', dest='score', default=0.92,
+        help='minimum identity fraction (default = 0.92)', type=float)
     parser.add_option('-b', '--table', dest='table', default=None,
         help='output overlap length to a text file')
-        
+    parser.add_option('-l', '--length', dest='length', default=12,
+        help='minimum overlap length in nucleotides')    
     return parser
 
 def doStitch(recs):
