@@ -27,28 +27,7 @@ Stitch calculates all possible overlaps and chooses the one with
 the highest score.  Any matches/mismatches containing an `N` do not
 contribute to the score.
 
-## Pipelineing
-
-* Importing from Python (this will be improved, see stitch on github):
-
-		from stitch import *
-		stitch(options={
-	  	'filea': 'filenamea',
-	  	'fileb': 'filenameb',
-	  	'prefix': 'data/stitched.fastq',
-	  	'pretty': False,
-	  	'threads': None,
-	  	'score': None })
-		
-* You could also just use `subprocess.Popen`:
-
-		from subprocess import Popen
-		Popen.(['stitch','-i','filea','-j','fileb','-o','output'])
-
-* Or from Ruby/Perl:
-
-		system('stitch -i filea -j fileb -o output')
-    
+		    
 		
 ## Installation
 
@@ -77,10 +56,22 @@ Other options:
  - `-p pretty output` prints a user-friendly output.  Useful for adjusting
    score.
 
-## Bugs
+## Pipelineing
 
- - Don't know of any at the moment
-   if you find one, [let me know]!(https://github.com/audy/stitch/issues) thx.
+	* Importing from Python (this will be improved, see stitch on github):
+
+			from stitch import *
+			stitch(options={
+		  	'filea': 'filenamea',
+		  	'fileb': 'filenameb',
+		  	'prefix': 'data/stitched.fastq',
+		  	'pretty': False,
+		  	'threads': None,
+		  	'score': None })
+
+## Bugs/Feature requests
+
+ - if you have one, [let me know](https://github.com/audy/stitch/issues). Thx!
 
 ## Features
 
