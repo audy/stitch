@@ -58,8 +58,6 @@ Other options:
 
 ## Pipelineing
 
-	* Importing from Python (this will be improved, see stitch on github):
-
 			from stitch import *
 			stitch(options={
 		  	'filea': 'filenamea',
