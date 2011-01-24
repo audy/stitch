@@ -122,11 +122,11 @@ class Stitch:
         beg = seqa[0:i-1]
         end = seqb[-i+1:]
         qbeg = self.reca.qual[0:i-1]
-        qend = self.recb.qual[-i+1:][::-1]
+        qend = self.recb.qual[::-1][-i+1:]
         smida = seqa[i-1:]
         smidb = seqb[0:len(seqb)-i+1]
         qmida = self.reca.qual[i-1:]
-        qmidb = self.recb.qual[0:len(seqb)-i+1][::-1]
+        qmidb = self.recb.qual[::-1][0:len(seqb)-i+1]
         mid, midq = [], []
         
         for (na, qa), (nb, qb) in \
