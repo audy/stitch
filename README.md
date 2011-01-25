@@ -52,7 +52,7 @@ Other options:
  - `-p pretty output` prints a user-friendly output.  Useful for adjusting
    score.
 
-## Pipelineing
+## Importing
 
 			from stitch import *
 			stitch(options={
