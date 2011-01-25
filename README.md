@@ -7,13 +7,9 @@ Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
 ## Description:
 
-Illumina sequencing has the ability to generate "paired ends."
-We did an experiment where our paired ends overlapped;
-I wrote this script to assemble these overlapping paired ends into contigs.
+Stitch creates contigs from overlapping paired-end Illumina reads using a simple (but fast) algorithm.
 
-It does a simple alignment finding the best possible overlap.  The simple
-alignment does not take into account gaps which are uncommon.  This was done
-for simplicity and speed.
+Stitch is a __pre-publication__ release meaning (a) It's buggy (b) You should cite us (c) contact me if you need to cite us.
 
 ### Score Calculation:
 
@@ -26,8 +22,6 @@ The default minimum score is 0.6 (60%).
 Stitch calculates all possible overlaps and chooses the one with
 the highest score.  Any matches/mismatches containing an `N` do not
 contribute to the score.
-
-		    
 		
 ## Installation
 
@@ -40,7 +34,7 @@ contribute to the score.
 
 ## Usage
 
-Do this:
+Invoke _Comme ca_:
 
     $ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>
 
@@ -73,7 +67,7 @@ Other options:
 
 ## Features
 
- - Automatically joines overlapping paired ends!
+ - Automatically joins overlapping paired ends!
  - **Multithreaded** - Automatically uses all cores on your system!
  - Generates 3 files: `contigs`, duds from `fastqfile1` and duds from
    `fastqfile2`
