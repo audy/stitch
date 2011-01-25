@@ -1,7 +1,8 @@
 # Stitch
 
-Austin Glenn Davis-Richardson
-<adavisr@ufl.edu>
+Austin Glenn Davis-Richardson  
+<adavisr@ufl.edu>  
+[@audyyy](http://www.twitter.com/audyyy)
 
 Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
