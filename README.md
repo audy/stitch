@@ -1,7 +1,7 @@
 # Stitch
 
 Austin Glenn Davis-Richardson
-<harekrishna@gmail.com>
+<adavisr@ufl.edu>
 
 Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
@@ -9,7 +9,7 @@ Working under Dr. Eric Triplett & Dr. Adriana Giongo
 
 Stitch creates contigs from overlapping paired-end Illumina reads using a simple (but fast) algorithm.
 
-Stitch is a __pre-publication__ release meaning (a) It's buggy (b) You should cite us (c) contact me if you need to cite us.
+Stitch is a __pre-publication__ release meaning (a) It's buggy (b) You should cite us (c) [send a message](mailto:adavisr@ufl.edu) if you need to cite us.
 
 ### Score Calculation:
 
@@ -26,7 +26,9 @@ contribute to the score.
 ## Installation
 
 1. Once in the stitch directory do:
-   > `$ sudo python setup.py install`
+   > `$ python setup.py install`
+
+	(you may have to sudo if you do not have write privileges to `/usr/local/bin`)
 
 2. Stitch should have installed successfully meaning that you can now do this:
    > `$ stitch -h`
@@ -34,7 +36,7 @@ contribute to the score.
 
 ## Usage
 
-Invoke _Comme ca_:
+Invoke _comme ca_:
 
     $ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>
 
@@ -63,16 +65,21 @@ Other options:
 
 ## Bugs/Feature requests
 
- - if you have one, [let me know](https://github.com/audy/stitch/issues). Thx!
+ - If you have any, [let me know](https://github.com/audy/stitch/issues). Thx!
 
 ## Features
 
  - Automatically joins overlapping paired ends!
  - **Multithreaded** - Automatically uses all cores on your system!
- - Generates 3 files: `contigs`, duds from `fastqfile1` and duds from
-   `fastqfile2`
+ - Generates 3 files: `contigs`, and two files for unassembled pairs.
 
-## Know your rights
+## Plans
+
+ - Accept interleaved fastq format.
+ - Support piped IO.
+ - Implement with MapReduce.
+
+## License
 
 Stitch is free and open-source.
 See LICENSE (GNU GPL v3)
