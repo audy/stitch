@@ -22,20 +22,20 @@ Invoke, _comme ca_
 
 More options,
 
-          -h, --help            show this help message and exit
-          -i FILEA, --first=FILEA
-                                first fastq file
-          -j FILEB, --second=FILEB
-                                second fastq file
-          -o PREFIX, --output=PREFIX
-                                output prefix (omit to print to stdout)
-          -t THREADS, --threads=THREADS
-                                number of threads (default = all available)
-          -p, --pretty_output   displays overlapping contigs in a nice way.
-          -s SCORE, --score=SCORE
-                                minimum percent identity (default = 25)
-          -b TABLE, --table=TABLE
-                                output overlap length to a text file
+    -h, --help            show this help message and exit
+    -i FILEA, --first=FILEA
+                        first fastq file
+    -j FILEB, --second=FILEB
+                        second fastq file
+    -o PREFIX, --output=PREFIX
+                        output prefix (omit to print to stdout)
+    -t THREADS, --threads=THREADS
+                        number of threads (default = all available)
+    -p, --pretty_output   displays overlapping contigs in a nice way.
+    -s SCORE, --score=SCORE
+                        minimum percent identity (default = 25)
+    -b TABLE, --table=TABLE
+                        output overlap length to a text file
 
 ## Bugs/Feature requests
 
