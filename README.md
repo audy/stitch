@@ -1,14 +1,17 @@
 # Stitch
 
 Austin Glenn Davis-Richardson  
-<adavisr@ufl.edu>  
-[@audyyy](http://www.twitter.com/audyyy)
-
-Working under Dr. Eric Triplett & Dr. Adriana Giongo
+<heyaudy@gmail.com>
 
 ## Description:
 
-Stitch creates contigs from overlapping paired-end Illumina reads using a simple (but fast) algorithm.
+Stitch assembles overlapping paired-end reads into a single contig for each pair. This increases the read length and hopefully the quality of a _de novo_ or reference assembly.
+
+Stitch is multi-threaded and will automatically use all cores on your system unless told otherwise.
+
+Stitch currently only reads FASTQ format. QSEQ and FASTA formats to come.
+
+Reads that are not found to overlap are dumped in a file called `<prefix>-singletons` and are in FASTQ format. These can then be trimmed and combined with contigs to do a _de novo_ assembly.
 
 Stitch is a __pre-publication__ release meaning (a) It's buggy (b) You should cite us (c) [send a message](mailto:adavisr@ufl.edu) if you need to cite us.
 
@@ -24,16 +27,10 @@ Stitch calculates all possible overlaps and chooses the one with
 the highest score.  Any matches/mismatches containing an `N` do not
 contribute to the score.
 		
-## Installation
+## Requirements
 
-1. Once in the stitch directory do:
-   > `$ python setup.py install`
-
-	(you may have to sudo if you do not have write privileges to `/usr/local/bin`)
-
-2. Stitch should have installed successfully meaning that you can now do this:
-   > `$ stitch -h`
-   to display help information
+- Python 2.6, 2.7
+- Mac OSX or Linux (Windows might work but hasn't been tested)
 
 ## Usage
 
@@ -53,34 +50,8 @@ Other options:
  - `-p pretty output` prints a user-friendly output.  Useful for adjusting
    score.
 
-## Importing
-
-			from stitch import *
-			stitch(options={
-		  	'filea': 'filenamea',
-		  	'fileb': 'filenameb',
-		  	'prefix': 'data/stitched.fastq',
-		  	'pretty': False,
-		  	'threads': None,
-		  	'score': None })
-
 ## Bugs/Feature requests
 
  - If you have any, [let me know](https://github.com/audy/stitch/issues). Thx!
 
-## Features
 
- - Automatically joins overlapping paired ends!
- - **Multithreaded** - Automatically uses all cores on your system!
- - Generates 3 files: `contigs`, and two files for unassembled pairs.
-
-## Plans
-
- - Accept interleaved fastq format.
- - Support piped IO.
- - Implement with MapReduce.
-
-## License
-
-Stitch is free and open-source.
-See LICENSE (GNU GPL v3)
