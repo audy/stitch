@@ -26,7 +26,16 @@ class TestAlignments(unittest.TestCase):
         for i, j in records:
             c = contigs.pop(0)
             res = Stitch(i, j).record.seq
-            self.assertEqual(res, c)
+            
+            # TODO, also check quality scores
+            
+            try:
+                self.assertEqual(res, c)
+            except AssertionError, e:
+                # easier way to do this?
+                print 'ERROR:    %s' % i.header
+                print 'expected: %s' % i.seq
+                print 'got:      %s' % res
 
 
 if __name__ == '__main__':

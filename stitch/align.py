@@ -70,6 +70,8 @@ class Stitch:
         qmidb = self.recb.qual[::-1][0:len(seqb)-i+1]
         mid, midq = [], []
         
+        print >> sys.stderr, 'asdfasdfasdf'
+        
         for (na, qa), (nb, qb) in \
                         zip(zip(smida, qmida), zip(smidb, qmidb)):
             if qa > qb:
