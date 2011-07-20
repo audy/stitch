@@ -107,6 +107,9 @@ class Stitch:
         seqa, seqb = self.reca.seq, self.recb.revcomp
         seqb = self.recb.revcomp
         
+        if len(seqa) != len(seqb):
+            raise Exception, 'Stitch requires reads to be of the same length!'
+        
         # get the minimum length for score generation
         length = min([len(i) for i in (seqa, seqb)])
         

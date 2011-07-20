@@ -16,6 +16,8 @@ Stitch is a __pre-publication__ release meaning (a) It's still buggy (b) Be nice
 
 ## Usage
 
+**NOTE** - Stitch expects reads to be of the same length!
+
 Invoke, _comme ca_
 
     Usage: stitch.py -i <fastq file 1> -j <fastq file 2> -o <output prefix>
