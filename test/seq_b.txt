@@ -1,0 +1,4 @@
+@sequence_1
+CCCCCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTT
++sequence_1
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
