@@ -16,21 +16,26 @@ Stitch is a __pre-publication__ release meaning (a) It's still buggy (b) Be nice
 
 ## Usage
 
-Invoke _comme ca_:
+Invoke, _comme ca_
 
-    $ stitch -i <fastq file 1> -j <fastq file 2> -o <output prefix>
+    Usage: stitch.py -i <fastq file 1> -j <fastq file 2> -o <output prefix>
 
-Where `<fastqfile1>` is the 5' most and `<fastqfile2>` is the 3' most.
+More options,
 
-`<outputprefix>` will result in three files: contigs, and two files for rejects
-
-Other options:
-
- - `-h` prints help
- - `-t [THREADS]` specify number of cores to use (Default=all)
- - `-s [SCORE]` minimum score (Default=0.6)
- - `-p pretty output` prints a user-friendly output.  Useful for adjusting
-   score.
+          -h, --help            show this help message and exit
+          -i FILEA, --first=FILEA
+                                first fastq file
+          -j FILEB, --second=FILEB
+                                second fastq file
+          -o PREFIX, --output=PREFIX
+                                output prefix (omit to print to stdout)
+          -t THREADS, --threads=THREADS
+                                number of threads (default = all available)
+          -p, --pretty_output   displays overlapping contigs in a nice way.
+          -s SCORE, --score=SCORE
+                                minimum percent identity (default = 25)
+          -b TABLE, --table=TABLE
+                                output overlap length to a text file
 
 ## Bugs/Feature requests
 
