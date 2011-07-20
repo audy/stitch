@@ -27,7 +27,7 @@ class Dna:
     ''' An object representing either a FASTA or FASTQ record '''
     
     def __init__(self, header, sequence, quality = False):
-        self.header = header[1:-1]
+        self.header = header.lstrip('@').rstrip('\n')
         self.seq = sequence
         self.qual = quality
         if quality:
