@@ -20,10 +20,10 @@ Stitch aligns overlapping paired end reads by counting the number of matching nu
 
 The consensus sequence is generated thusly,
 
-    A ================= ===================================
-    B                   =================================== ============
-    C ================= =================================== ============
-                        <--------- "the middle" ----------->
+    A 5' =============== ================================> 3'
+    B                 3' <================================ ============ 5'
+    C 5' =============== ================================= ===========> 3'
+                        <--------- "the middle" ---------->
                         
     In the region dubbed "the middle", the nucleotide with the highest
     corresponding quality score is used (if there is a mismatch). If there is
