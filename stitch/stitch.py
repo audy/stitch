@@ -24,10 +24,12 @@ def stitch(*args, **kwargs):
     filea = kwargs.get('filea')
     fileb = kwargs.get('fileb')
     prefix = kwargs.get('prefix', None)
-    score = kwargs.get('score', 0.6)
+    score = kwargs.get('score', 35)
     pretty = kwargs.get('pretty', None)
     threads = kwargs.get('threads', None)
     table = kwargs.get('table', None)
+
+    score = 20
 
     
     if not (filea or fileb):
@@ -47,10 +49,10 @@ def stitch(*args, **kwargs):
     # Ready.. Set..
     numcontigs, numtotes, overlaps = 0, 0, 0
     starttime = time()
-    p = Pool(threads)
+    #p = Pool(threads)
     
     # Go!
-    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.score > score:
             numcontigs += 1
@@ -136,7 +138,7 @@ class Stitch:
                 elif i != j:
                     score += scores['un']
                 if 'N' in [i, j]:
-                    score += N
+                    score += scores['N']
         
             alignments[score] = n
         
@@ -146,7 +148,6 @@ class Stitch:
         # GENERATE CONTIG
         
         # beginning
-        best_index = 0
         if best_index == 0:
             beginning = a
             qual_beg  = qa
@@ -197,7 +198,10 @@ class Stitch:
         
         # double-check
         assert len(newseq) == len(newqual)
-                
+
+        # print >> sys.stderr, " b: %s \n m: %s \n e: %s\n\n"  % ( beginning, middle, end )
+        # print >> sys.stderr, newseq 
+
         # generate pretty print view
         self.pretty = '1:%s\n2:%s\nC:%s\n' % \
                         (a + '-'*(best_index-1),
@@ -205,6 +209,7 @@ class Stitch:
         
         # create a new record sequence for the contig
         self.record = Dna(self.reca.header, newseq, newqual)
+        self.score = best_score
 
 def get_args():
     from optparse import OptionParser
@@ -232,11 +237,8 @@ def get_args():
         action='store_true',
         help='displays overlapping contigs in a nice way.')
     
-    parser.add_option('-s', '--score', dest='score', default=0.6,
+    parser.add_option('-s', '--score', dest='score', default=35,
         help='minimum percent identity (default = 25)', type=float)
-    
-    parser.add_option('-b', '--table', dest='table', default=None,
-        help='output overlap length to a text file')
     
     return parser
 
@@ -280,8 +282,7 @@ def main():
                 prefix  = options.prefix,
                 threads = options.threads,
                 pretty  = options.pretty,
-                score   = options.score,
-                table   = options.table)
+                score   = options.score)
     
     except KeyboardInterrupt:
         print >> sys.stderr, 'Ouch!'
