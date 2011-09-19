@@ -31,6 +31,7 @@ The consensus sequence is generated thusly,
     given). In the case of a tie, a 'N' is used and the quality score is 
     unchanged.
     
+Stitch assumes that read A is 3'-5' and read B is 5'-3'. So read B is automatically reverse-complemented in the alignment procedure. (I know I should make this an option but I haven't yet).
 
 ## Usage
 
