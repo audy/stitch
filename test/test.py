@@ -17,16 +17,17 @@ def test_alignments():
 
     for i, j in records:
         c = contigs.pop(0)
-        res = Stitch(i, j).record.seq
+        res = Stitch(i, j)
         
-        # TODO, also check quality scores
-        
+        # TODO, also check quality scores 
+        # print res.pretty
+        seq = res.record.seq
         try:
-            assert res == c
+            assert seq == c
         except AssertionError:
             print 'ERROR:    %s' % i.header
             print 'expected: %s' % i.seq
-            print 'got:      %s' % res
+            print 'got:      %s' % seq
 
 
 if __name__ == '__main__':

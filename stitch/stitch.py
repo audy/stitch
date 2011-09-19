@@ -104,73 +104,104 @@ class Stitch:
         
         # reverse complement second sequence
         # this should be made into an option
-        seqa, seqb = self.reca.seq, self.recb.revcomp
-        seqb = self.recb.revcomp
+        a, b = self.reca.seq, self.recb.revcomp
         
-        if len(seqa) != len(seqb):
-            raise Exception, 'Stitch requires reads to be of the same length!'
+        # convert quality score to integers
+        qa, qb = [ [ ord(i) for i in j ] for j in [ self.reca.qual, self.recb.qual[::-1] ] ]
         
-        # get the minimum length for score generation
-        length = min([len(i) for i in (seqa, seqb)])
+        scores = {
+            'eq': +1,
+            'un': -1,
+            'N': 0,
+        }
         
-        scores, hits = [], {}
+        alignments = {}
         
-        # Find overlap
-        for i in range(len(seqa)):
-            score = 0
-            for na, nb in zip(seqa[i-1:], seqb[:-i+1]):
-                if ('N' in (na, nb)):
-                    continue
-                if (na == nb):
-                    score += 1
-                if (na != nb):
-                    score -= 1
-            hits[score] = i
-        
-        # BUG: this scoring scheme sometimes favors small alignments over larger ones
-        # with slightly worse scores. We prefer the larger ones. How to score differently
-        # so that length is taken into account? Normalize by overlap lenght?
-        
-        score = max(hits.keys())
-        i = hits[score] # i stands for index of best overlap
-        
-        self.overlap = len(seqa) - i
-        self.score = float(score)/(len(seqa)-i)
-        
-        # fuggered code to generate the contig
-        beg = seqa[0:i-1]
-        end = seqb[-i+1:]
-        qbeg = self.reca.qual[0:i-1]
-        qend = self.recb.qual[::-1][-i+1:]
-        smida = seqa[i-1:]
-        smidb = seqb[0:len(seqb)-i+1]
-        qmida = self.reca.qual[i-1:]
-        qmidb = self.recb.qual[::-1][0:len(seqb)-i+1]
-        mid, midq = [], []
-        
-        for (na, qa), (nb, qb) in \
-                        zip(zip(smida, qmida), zip(smidb, qmidb)):
-            if qa > qb:
-                mid += na
-                midq += qa
-            elif qa < qb:
-                mid += nb
-                midq += qb
+        for n in range(len(a)):
+            
+            # get overlapping region
+            ta = a[n:]
+            
+            # because 'string'[:-0] == ''
+            if n > 0:
+                tb = b[:-n]
             else:
-                if qa == qb:
-                    mid += na
-                    midq += qa
+                tb = b
+            
+            # score overlap
+            score = 0
+            for i, j in zip(ta, tb):
+                if i == j:
+                    score += scores['eq']
+                elif i != j:
+                    score += scores['un']
+                if 'N' in [i, j]:
+                    score += N
+        
+            alignments[score] = n
+        
+        best_score = max(alignments.keys())
+        best_index = alignments[best_score]
+        
+        # GENERATE CONTIG
+        
+        # beginning
+        best_index = 0
+        if best_index == 0:
+            beginning = a
+            qual_beg  = qa
+        else:
+            beginning = a[:best_index]
+            qual_beg  = qa[:best_index]
+        
+        # middle
+        middle = []
+        qual_middle = []
+        for (i, qi), (j, qj) in zip(zip(a[best_index:], qa[best_index:]), \
+                    zip(b[:-best_index], qb[:-best_index])):
+            if i == j:
+                middle.append(i)
+                qual_middle.append(max([qi, qj]))
+            elif i != j:
+                # take best quality
+                if qi > qj: # i wins
+                    middle.append(i)
+                    qual_middle.append(qi)
+                elif qi < qj: # j wins
+                    middle.append(j)
+                    qual_middle.append(qj)
+                elif qi == qj: # tie
+                    middle.append('N')
+                    qual_middle.append(qi)
                 else:
-                    mid += 'N'
-                    midq += qa
+                    raise Exception
+            else:
+                raise Exception
+                
+        middle = ''.join(middle)
+        qual_middle = qual_middle
         
-        newseq = beg + ''.join(mid) + end
-        newqual = qbeg + ''.join(midq) + qend
+        assert len(middle) == len(qual_middle)
         
+        # end
+        if best_index == 0:
+            end = ''
+            qual_end = []
+        else:
+            end = b[best_index:]
+            qual_end = qb[best_index:]
+        
+        # concatenate
+        newseq  = beginning + middle + end
+        newqual = ''.join(chr(i) for i in qual_beg + qual_middle + qual_end)
+        
+        # double-check
+        assert len(newseq) == len(newqual)
+                
         # generate pretty print view
         self.pretty = '1:%s\n2:%s\nC:%s\n' % \
-                        (seqa + '-'*(i-1),
-                        '-'*(i-1) + seqb, newseq)
+                        (a + '-'*(best_index-1),
+                        '-'*(best_index-1) + b, newseq)
         
         # create a new record sequence for the contig
         self.record = Dna(self.reca.header, newseq, newqual)
