@@ -49,10 +49,10 @@ def stitch(*args, **kwargs):
     # Ready.. Set..
     numcontigs, numtotes, overlaps = 0, 0, 0
     starttime = time()
-    #p = Pool(threads)
+    p = Pool(threads)
     
     # Go!
-    for i in imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
+    for i in p.imap(doStitch, izip(Fasta(seqsa), Fasta(seqsb))):
         numtotes += 1
         if i.score > score:
             numcontigs += 1
