@@ -1,7 +1,7 @@
 # Stitch
 
 Austin Glenn Davis-Richardson  
-<heyaudy@gmail.com>
+<harekrishna@gmail.com>
 
 Stitch assembles overlapping paired-end reads into a single contig for each pair. This increases the read length and hopefully the quality of a _de novo_ or reference assembly. Stitch is multi-threaded and will automatically use all cores on your system unless told otherwise. Stitch currently only reads FASTQ format. QSEQ and FASTA formats to come. Reads that are not found to overlap are dumped in a file called `<prefix>-singletons` and are in FASTQ format. These can then be trimmed and combined with contigs to do a _de novo_ assembly.
 
@@ -12,7 +12,7 @@ Stitch is a __pre-publication__ release meaning (a) It's still buggy (b) Be nice
 ## Requirements
 
 - Python 2.6, 2.7
-- Mac OSX or Linux (Windows might work but hasn't been tested)
+- Mac OS X or Linux (Windows might work but hasn't been tested)
 
 ## Usage
 
