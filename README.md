@@ -20,16 +20,12 @@ Stitch aligns overlapping paired end reads by counting the number of matching nu
 
 The consensus sequence is generated thusly,
 
-    A 5' =============== ================================> 3'
-    B                 3' <================================ ============ 5'
+    A 5' =============== =================================> 3'
+    B                3' <================================= ===========  5'
     C 5' =============== ================================= ===========> 3'
                         <--------- "the middle" ---------->
                         
-    In the region dubbed "the middle", the nucleotide with the highest
-    corresponding quality score is used (if there is a mismatch). If there is
-    a match, then that nucleotide is used (and the highest quality score is 
-    given). In the case of a tie, a 'N' is used and the quality score is 
-    unchanged.
+In the region dubbed "the middle", the nucleotide with the highest corresponding quality score is used (if there is a mismatch). If there is a match, then that nucleotide is used (and the highest quality score is  given). In the case of a tie, a 'N' is used and the quality score is unchanged.
     
 Stitch assumes that read A is 3'-5' and read B is 5'-3'. So read B is automatically reverse-complemented in the alignment procedure. (I know I should make this an option but I haven't yet).
 
