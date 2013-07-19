@@ -1,7 +1,5 @@
 # Stitch
 
-**Stitch is currently not in development. See [PandaSeq](https://github.com/neufeld/pandaseq)**
-
 Austin G. Davis-Richardson  
 <harekrishna@gmail.com>
 
