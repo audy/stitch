@@ -1,5 +1,7 @@
 # Stitch
 
+**No longer maintained**. Please use (Pandsaseq)[https://github.com/neufeld/pandaseq]
+
 Austin G. Davis-Richardson  
 <harekrishna@gmail.com>
 
