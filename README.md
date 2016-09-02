@@ -13,7 +13,8 @@ format. QSEQ and FASTA formats to come. Reads that are not found to overlap are
 dumped in a file called `<prefix>-singletons` and are in FASTQ format. These
 can then be trimmed and combined with contigs to do a _de novo_ assembly.
 
-Stitch is licensed under the GNU GPL v3.
+Stitch is licensed under the MIT open source license. See `LICENSE.md` for
+details.
 
 # Citing Stitch
 
