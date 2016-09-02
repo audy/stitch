@@ -15,8 +15,29 @@ can then be trimmed and combined with contigs to do a _de novo_ assembly.
 
 Stitch is licensed under the GNU GPL v3.
 
-Stitch is a __pre-publication__ release meaning (a) It's still buggy (b) Be nice and cite me (c) [send a message](mailto:adavisr@ufl.edu) if you need to find out how.
-		
+# Citing Stitch
+
+Please us the following citation:
+
+Brown, Christopher T., et al. "Gut microbiome metagenomics analysis suggests a
+functional model for the development of autoimmunity for type 1 diabetes." PloS
+one 6.10 (2011): e25792.
+
+Or, in BibTex:
+
+```
+@article{brown2011gut,
+  title={Gut microbiome metagenomics analysis suggests a functional model for the development of autoimmunity for type 1 diabetes},
+  author={Brown, Christopher T and Davis-Richardson, Austin G and Giongo, Adriana and Gano, Kelsey A and Crabb, David B and Mukherjee, Nabanita and Casella, George and Drew, Jennifer C and Ilonen, Jorma and Knip, Mikael and others},
+  journal={PloS one},
+  volume={6},
+  number={10},
+  pages={e25792},
+  year={2011},
+  publisher={Public Library of Science}
+}
+```
+
 ## Requirements
 
 - Python 2.6, 2.7
